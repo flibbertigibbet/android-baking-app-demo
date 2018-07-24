@@ -1,9 +1,9 @@
 package com.banderkat.recipies;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-public class Recipes extends AppCompatActivity {
+public class RecipesMainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
