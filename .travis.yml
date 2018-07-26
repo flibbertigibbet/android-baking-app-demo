@@ -10,7 +10,7 @@ env:
   - ABI=armeabi-v7a
   - EMULATOR_TAG=android
   - ANDROID_BUILD_TOOLS=27.0.3
-  - ADB_INSTALL_TIMEOUT=15 # wait this many minutes for adb to connect to emulator (2 by default)
+  - ADB_INSTALL_TIMEOUT=20 # wait this many minutes for adb to connect to emulator (2 by default)
   # fix Qt for emulator
   - QT_QPA_PLATFORM_PLUGIN_PATH=offscreen
   - LD_LIBRARY_PATH=${ANDROID_HOME}/tools/lib64:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib
@@ -40,12 +40,13 @@ script:
   - ./gradlew assemble -PdisablePreDex;
   - echo "Starting unit tests..."
   - ./gradlew assemble lint build test -PdisablePreDex;
-  - android-wait-for-emulator
+  - travis_wait 5 android-wait-for-emulator
   - adb shell input keyevent 82 &
   # Avoid having it lock itself again.
   - adb shell svc power stayon true
   # Run instrumentation tests
   - echo "Going to run instrumentation tests..."
+  - adb shell input keyevent 1 &
   - travis_wait 10 ./gradlew connectedCheck -PdisablePreDex;
   - echo "All done."
 
