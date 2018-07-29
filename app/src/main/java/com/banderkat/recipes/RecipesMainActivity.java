@@ -1,4 +1,4 @@
-package com.banderkat.recipies;
+package com.banderkat.recipes;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

@@ -1,4 +1,4 @@
-package com.banderkat.recipies;
+package com.banderkat.recipes;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.filters.LargeTest;

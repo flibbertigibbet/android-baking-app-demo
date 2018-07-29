@@ -1,4 +1,4 @@
-package com.banderkat.recipies;
+package com.banderkat.recipes;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.banderkat.recipies", appContext.getPackageName());
+        assertEquals("com.banderkat.recipes", appContext.getPackageName());
     }
 }
