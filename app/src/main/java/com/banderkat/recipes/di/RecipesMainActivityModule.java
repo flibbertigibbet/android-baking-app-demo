@@ -13,5 +13,5 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class RecipesMainActivityModule {
     @ContributesAndroidInjector
-    abstract RecipesMainActivity contributeMainActivity();
+    abstract RecipesMainActivity contributeRecipesMainActivity();
 }

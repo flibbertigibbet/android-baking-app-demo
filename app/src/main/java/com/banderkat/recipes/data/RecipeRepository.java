@@ -1,6 +1,8 @@
 package com.banderkat.recipes.data;
 
 import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.networkresource.RecipeNetworkBoundResource;
@@ -14,8 +16,8 @@ public class RecipeRepository {
 
     private static final String LOG_LABEL = "RecipeRepository";
 
-    public final RecipeWebservice recipeWebservice;
-    public final RecipeDao recipeDao;
+    public RecipeWebservice recipeWebservice;
+    public RecipeDao recipeDao;
 
     @Inject
     public RecipeRepository(RecipeWebservice recipeWebservice, RecipeDao recipeDao) {
@@ -23,12 +25,18 @@ public class RecipeRepository {
         this.recipeDao = recipeDao;
     }
 
-    public LiveData<Recipe> getRecipe(long RecipeId) {
+    public LiveData<Recipe> getRecipe(long recipeId) {
         // return a LiveData item directly from the database.
-        return recipeDao.getRecipe(RecipeId);
+        return recipeDao.getRecipe(recipeId);
     }
 
     public LiveData<Resource<List<Recipe>>> loadRecipes() {
-        return new RecipeNetworkBoundResource(recipeWebservice, recipeDao).getAsLiveData();
+        return new RecipeNetworkBoundResource(recipeWebservice, recipeDao) {
+            @Override
+            @NonNull
+            protected LiveData<List<Recipe>> loadFromDb() {
+                return recipeDao.getAll();
+            }
+        }.getAsLiveData();
     }
 }

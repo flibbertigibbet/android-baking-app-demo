@@ -22,7 +22,7 @@ public abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(RecipeViewModel.class)
-    abstract ViewModel bindRecipeViewModel(RecipeViewModel RecipeViewModel);
+    abstract ViewModel bindRecipeViewModel(RecipeViewModel recipeViewModel);
 
     @Binds
     abstract ViewModelProvider.Factory bindViewModelFactory(RecipeViewModelFactory factory);

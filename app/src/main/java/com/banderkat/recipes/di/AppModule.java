@@ -63,7 +63,6 @@ class AppModule {
     @Singleton
     @Provides
     RecipeDao provideRecipeDao(RecipeDatabase db) {
-        Log.d("AppModule", "provideRecipeDao");
         return db.recipeDao();
     }
 
