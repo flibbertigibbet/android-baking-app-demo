@@ -8,6 +8,7 @@ import android.util.Log;
 import com.banderkat.recipes.BuildConfig;
 import com.banderkat.recipes.data.RecipeDao;
 import com.banderkat.recipes.data.RecipeWebservice;
+import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
 
 import java.util.List;
@@ -44,6 +45,12 @@ abstract public class RecipeNetworkBoundResource extends NetworkBoundResource<Li
         for (Recipe item : recipes) {
             // FIXME: implement timestamping or remove
             //item.setTimestamp(timestamp);
+
+            // Explicitly set the related recipe ID on each of its ingredients
+            long id = item.getId();
+            for (Ingredient ingredient : item.getIngredients()) {
+                ingredient.setRecipeId(id);
+            }
             recipeDao.save(item);
         }
     }

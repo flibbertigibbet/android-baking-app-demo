@@ -2,7 +2,6 @@ package com.banderkat.recipes.data;
 
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.networkresource.RecipeNetworkBoundResource;

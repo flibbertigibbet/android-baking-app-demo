@@ -22,15 +22,19 @@ public abstract class RecipeDao {
 
     private static final String LOG_LABEL = "RecipeDao";
 
+    @Transaction
     @Update()
     public abstract void update(Recipe obj);
 
+    @Transaction
     @Delete()
     public abstract void delete(Recipe obj);
 
+    @Transaction
     @Update()
     public abstract void bulkUpdate(List<Recipe> objs);
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void save(Recipe obj);
 
@@ -38,11 +42,13 @@ public abstract class RecipeDao {
     @Query("SELECT * FROM recipe")
     public abstract LiveData<List<Recipe>> getAll();
 
+    @Transaction
     @Query("SELECT * " +
             "FROM recipe " +
             "WHERE recipe.id = :recipeId ")
     public abstract LiveData<Recipe> getRecipe(long recipeId);
 
+    @Transaction
     @Query("DELETE FROM recipe")
     public abstract void clear();
 }
