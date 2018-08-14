@@ -8,10 +8,9 @@ import android.util.Log;
 import com.banderkat.recipes.data.RecipeViewModel;
 import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
+import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Status;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,10 +45,14 @@ public class RecipesMainActivity extends AppCompatActivity {
             Log.d(LOG_LABEL, "Found recipes! Got: " + recipeResource.data.size());
             for (Recipe recipe: recipeResource.data) {
                 Log.d(LOG_LABEL, recipe.getId() + ": " + recipe.getName());
-                List<Ingredient> ingredients = recipe.getIngredients();
-                for (Ingredient ingredient : ingredients) {
+                for (Ingredient ingredient : recipe.getIngredients()) {
                     Log.d(LOG_LABEL, "  Ingredient for recipe #" + ingredient.getRecipeId() +
                             ": " + ingredient.getId() + " - " + ingredient.getIngredient());
+                }
+
+                for (Step step: recipe.getSteps()) {
+                    Log.d(LOG_LABEL, "  Step for recipe #" + step.getRecipeId() +
+                            ": " + step.getId() + " - " + step.getShortDescription());
                 }
             }
         });

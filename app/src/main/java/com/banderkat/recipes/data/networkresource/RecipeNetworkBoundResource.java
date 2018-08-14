@@ -3,13 +3,13 @@ package com.banderkat.recipes.data.networkresource;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.banderkat.recipes.BuildConfig;
 import com.banderkat.recipes.data.RecipeDao;
 import com.banderkat.recipes.data.RecipeWebservice;
 import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
+import com.banderkat.recipes.data.models.Step;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,10 +46,13 @@ abstract public class RecipeNetworkBoundResource extends NetworkBoundResource<Li
             // FIXME: implement timestamping or remove
             //item.setTimestamp(timestamp);
 
-            // Explicitly set the related recipe ID on each of its ingredients
+            // Explicitly set the related recipe ID on each of its ingredients and steps
             long id = item.getId();
             for (Ingredient ingredient : item.getIngredients()) {
                 ingredient.setRecipeId(id);
+            }
+            for (Step step : item.getSteps()) {
+                step.setRecipeId(id);
             }
             recipeDao.save(item);
         }
