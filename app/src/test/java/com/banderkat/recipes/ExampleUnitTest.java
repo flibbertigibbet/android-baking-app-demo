@@ -1,4 +1,4 @@
-package com.banderkat.recipies;
+package com.banderkat.recipes;
 
 import org.junit.Test;
 

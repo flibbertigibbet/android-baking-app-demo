@@ -40,7 +40,7 @@ script:
   - ./gradlew assemble -PdisablePreDex;
   - echo "Starting unit tests..."
   - ./gradlew assemble lint build test -PdisablePreDex;
-  - travis_wait 5 android-wait-for-emulator
+  - travis_wait 10 android-wait-for-emulator
   - adb shell input keyevent 82 &
   # Avoid having it lock itself again.
   - adb shell svc power stayon true
