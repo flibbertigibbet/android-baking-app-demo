@@ -25,9 +25,26 @@ public class Recipe {
     @TypeConverters(StepConverter.class)
     private List<Step> steps;
 
+    // timestamp is not final, as it is set on database save, and not by serializer
+    private long timestamp;
+
     public Recipe(long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    /**
+     * Timestamp entries. Timestamp value does not come from query result; it should be set
+     * on database save. Gson serializer will initialize value to zero.
+     *
+     * @param timestamp Time in milliseconds since Unix epoch
+     */
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     public long getId() {

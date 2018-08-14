@@ -43,8 +43,7 @@ abstract public class RecipeNetworkBoundResource extends NetworkBoundResource<Li
 
         // save recipes
         for (Recipe item : recipes) {
-            // FIXME: implement timestamping or remove
-            //item.setTimestamp(timestamp);
+            item.setTimestamp(timestamp);
 
             // Explicitly set the related recipe ID on each of its ingredients and steps
             long id = item.getId();
@@ -64,12 +63,8 @@ abstract public class RecipeNetworkBoundResource extends NetworkBoundResource<Li
             return true;
         }
 
-        // FIXME: implement timestamping or remove
-        /*
-        Recipe first = data.get(0).getRecipe();
+        Recipe first = data.get(0);
         return System.currentTimeMillis() - first.getTimestamp() > RATE_LIMIT;
-        */
-        return false;
     }
 
     @NonNull @Override
