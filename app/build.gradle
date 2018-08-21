@@ -33,7 +33,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0-rc01'
+
+    def appCompatVersion = '28.0.0-rc01'
+    implementation "com.android.support:appcompat-v7:$appCompatVersion"
+    implementation "com.android.support:recyclerview-v7:$appCompatVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     // Architecture Components
