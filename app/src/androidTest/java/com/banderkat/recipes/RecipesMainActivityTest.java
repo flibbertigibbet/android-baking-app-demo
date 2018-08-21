@@ -22,6 +22,6 @@ public class RecipesMainActivityTest {
 
     @Test
     public void mainActivityShouldDisplay() {
-        Espresso.onView(withId(R.id.recipes_main_activity_text)).check(matches(isDisplayed()));
+        Espresso.onView(withId(R.id.recipe_activity_layout)).check(matches(isDisplayed()));
     }
 }
