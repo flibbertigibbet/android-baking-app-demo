@@ -3,8 +3,13 @@ package com.banderkat.recipes;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
+import com.banderkat.recipes.adapters.RecipeListAdapter;
 import com.banderkat.recipes.data.RecipeViewModel;
 import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
@@ -12,9 +17,12 @@ import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Status;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
-public class RecipesMainActivity extends AppCompatActivity {
+public class RecipesMainActivity extends AppCompatActivity implements RecipeListAdapter.RecipeListItemClickListener {
 
     private static final String LOG_LABEL = "MainActivity";
 
@@ -22,10 +30,23 @@ public class RecipesMainActivity extends AppCompatActivity {
     public RecipeViewModelFactory viewModelFactory;
     RecipeViewModel viewModel;
 
+    private List<Recipe> recipeList;
+
+    private RecyclerView recipeListRecyclerView;
+    private RecipeListAdapter recipeListAdapter;
+    private TextView noDataTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recipeListRecyclerView = findViewById(R.id.recipe_list_recycler_view);
+        recipeListRecyclerView.setLayoutManager(layoutManager);
+
+        noDataTextView = findViewById(R.id.recipe_list_no_data);
+        recipeList = new ArrayList<>();
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
         viewModel.getRecipes().observe(this, recipeResource -> {
@@ -40,6 +61,7 @@ public class RecipesMainActivity extends AppCompatActivity {
 
             if (recipeResource.data == null || recipeResource.data.isEmpty()) {
                 Log.e(LOG_LABEL, "Results returned, but empty");
+                recipeList = new ArrayList<>();
             }
 
             Log.d(LOG_LABEL, "Found recipes! Got: " + recipeResource.data.size());
@@ -55,6 +77,37 @@ public class RecipesMainActivity extends AppCompatActivity {
                             ": " + step.getId() + " - " + step.getShortDescription());
                 }
             }
+
+            recipeList = recipeResource.data;
+            loadData();
         });
+    }
+
+    private void loadData() {
+        Log.d(LOG_LABEL, "load recipes into list");
+        if (recipeListAdapter == null || recipeList.size() != recipeListAdapter.getItemCount()) {
+            recipeListAdapter = new RecipeListAdapter(this, recipeList, this);
+            recipeListAdapter.submitList(recipeList);
+            recipeListRecyclerView.setAdapter(recipeListAdapter);
+        } else {
+            // submit list for diff
+            recipeListAdapter.submitList(recipeList);
+        }
+
+        recipeListAdapter.notifyDataSetChanged();
+        recipeListRecyclerView.requestLayout();
+
+        if (recipeList.isEmpty()) {
+            recipeListRecyclerView.setVisibility(View.GONE);
+            noDataTextView.setVisibility(View.VISIBLE);
+        } else {
+            recipeListRecyclerView.setVisibility(View.VISIBLE);
+            noDataTextView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void clickedRecipe(int position) {
+        Log.d(LOG_LABEL, "Clicked recipe at position: " + position);
     }
 }
