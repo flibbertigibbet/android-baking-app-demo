@@ -1,4 +1,4 @@
-package com.banderkat.recipes;
+package com.banderkat.recipes.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.banderkat.recipes.R;
 import com.banderkat.recipes.adapters.RecipeListAdapter;
 import com.banderkat.recipes.data.RecipeViewModel;
 import com.banderkat.recipes.data.models.Ingredient;

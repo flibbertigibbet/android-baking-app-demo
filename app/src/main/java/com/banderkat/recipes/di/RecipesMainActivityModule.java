@@ -1,6 +1,6 @@
 package com.banderkat.recipes.di;
 
-import com.banderkat.recipes.RecipesMainActivity;
+import com.banderkat.recipes.activities.RecipesMainActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
