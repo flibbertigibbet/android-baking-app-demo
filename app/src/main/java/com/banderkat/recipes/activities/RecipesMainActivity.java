@@ -1,6 +1,7 @@
 package com.banderkat.recipes.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,13 +18,15 @@ import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Status;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
+import com.banderkat.recipes.fragments.RecipeListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecipesMainActivity extends AppCompatActivity implements RecipeListAdapter.RecipeListItemClickListener {
+public class RecipesMainActivity extends AppCompatActivity
+        implements RecipeListAdapter.RecipeListItemClickListener, RecipeListFragment.OnFragmentInteractionListener {
 
     private static final String LOG_LABEL = "MainActivity";
 
@@ -110,5 +113,10 @@ public class RecipesMainActivity extends AppCompatActivity implements RecipeList
     @Override
     public void clickedRecipe(int position) {
         Log.d(LOG_LABEL, "Clicked recipe at position: " + position);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.d(LOG_LABEL, "Fragment interaction callback");
     }
 }
