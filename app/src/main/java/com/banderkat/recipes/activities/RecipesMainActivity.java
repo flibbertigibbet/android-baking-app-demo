@@ -1,12 +1,16 @@
 package com.banderkat.recipes.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,6 +33,7 @@ public class RecipesMainActivity extends AppCompatActivity
         implements RecipeListAdapter.RecipeListItemClickListener, RecipeListFragment.OnFragmentInteractionListener {
 
     private static final String LOG_LABEL = "MainActivity";
+    private static final int TABLET_DISPLAY_WIDTH = 600;
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
@@ -45,7 +50,22 @@ public class RecipesMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager;
+
+        // get display width
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getRealMetrics(outMetrics);
+        int displayWidth = outMetrics.widthPixels;
+
+        Log.d(LOG_LABEL, "Display width: " + displayWidth);
+
+        if (displayWidth > TABLET_DISPLAY_WIDTH) {
+            layoutManager = new GridLayoutManager(this, 4);
+        } else {
+            layoutManager = new LinearLayoutManager(this);
+        }
+
         recipeListRecyclerView = findViewById(R.id.recipe_list_recycler_view);
         recipeListRecyclerView.setLayoutManager(layoutManager);
 
