@@ -1,16 +1,14 @@
 package com.banderkat.recipes.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Point;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.TextView;
 
@@ -52,16 +50,15 @@ public class RecipesMainActivity extends AppCompatActivity
 
         RecyclerView.LayoutManager layoutManager;
 
-        // get display width
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getRealMetrics(outMetrics);
-        int displayWidth = outMetrics.widthPixels;
+        // Get display width, in DP
+        Configuration configuration = getResources().getConfiguration();
+        int screenWidthDp = configuration.screenWidthDp;
 
-        Log.d(LOG_LABEL, "Display width: " + displayWidth);
+        Log.d(LOG_LABEL, "Display width in DP: " + screenWidthDp);
 
-        if (displayWidth > TABLET_DISPLAY_WIDTH) {
-            layoutManager = new GridLayoutManager(this, 4);
+        // show recipes as two columns on tablets
+        if (screenWidthDp >= TABLET_DISPLAY_WIDTH) {
+            layoutManager = new GridLayoutManager(this, 2);
         } else {
             layoutManager = new LinearLayoutManager(this);
         }
