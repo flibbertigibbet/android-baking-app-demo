@@ -5,6 +5,8 @@ import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.banderkat.recipes.activities.RecipesMainActivity;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,6 @@ public class RecipesMainActivityTest {
 
     @Test
     public void mainActivityShouldDisplay() {
-        Espresso.onView(withId(R.id.recipes_main_activity_text)).check(matches(isDisplayed()));
+        Espresso.onView(withId(R.id.recipe_activity_layout)).check(matches(isDisplayed()));
     }
 }

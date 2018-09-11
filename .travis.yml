@@ -47,7 +47,7 @@ script:
   # Run instrumentation tests
   - echo "Going to run instrumentation tests..."
   - adb shell input keyevent 1 &
-  - travis_wait 10 ./gradlew connectedCheck -PdisablePreDex;
+  - travis_wait 20 ./gradlew connectedCheck -PdisablePreDex;
   - echo "All done."
 
 before_cache:
