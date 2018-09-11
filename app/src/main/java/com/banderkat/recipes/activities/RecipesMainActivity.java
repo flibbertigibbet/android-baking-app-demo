@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -31,7 +30,7 @@ public class RecipesMainActivity extends AppCompatActivity
         implements RecipeListAdapter.RecipeListItemClickListener, RecipeListFragment.OnFragmentInteractionListener {
 
     private static final String LOG_LABEL = "MainActivity";
-    private static final int TABLET_DISPLAY_WIDTH = 600;
+    private static final int RECIPE_CARD_WIDTH = 300;
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
@@ -50,18 +49,18 @@ public class RecipesMainActivity extends AppCompatActivity
 
         RecyclerView.LayoutManager layoutManager;
 
-        // Get display width, in DP
+        // Get display width, in DP, to determine number of card columns to display
         Configuration configuration = getResources().getConfiguration();
         int screenWidthDp = configuration.screenWidthDp;
 
         Log.d(LOG_LABEL, "Display width in DP: " + screenWidthDp);
 
-        // show recipes as two columns on tablets
-        if (screenWidthDp >= TABLET_DISPLAY_WIDTH) {
-            layoutManager = new GridLayoutManager(this, 2);
-        } else {
-            layoutManager = new LinearLayoutManager(this);
+        int spanCount = screenWidthDp / RECIPE_CARD_WIDTH;
+        if (spanCount == 0) {
+            spanCount = 1;
         }
+
+        layoutManager = new GridLayoutManager(this, spanCount);
 
         recipeListRecyclerView = findViewById(R.id.recipe_list_recycler_view);
         recipeListRecyclerView.setLayoutManager(layoutManager);
