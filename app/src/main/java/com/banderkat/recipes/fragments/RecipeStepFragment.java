@@ -69,7 +69,7 @@ public class RecipeStepFragment extends Fragment {
             }
 
             // TODO: load recipe steps here
-            //recyclerView.setAdapter(new RecipeStepRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            //recyclerView.setAdapter(new RecipeStepAdapter(DummyContent.ITEMS, mListener));
         }
         return view;
     }

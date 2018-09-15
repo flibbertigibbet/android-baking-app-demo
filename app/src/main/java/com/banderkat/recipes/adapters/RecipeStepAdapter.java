@@ -1,4 +1,4 @@
-package com.banderkat.recipes.fragments;
+package com.banderkat.recipes.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,12 +17,12 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class RecipeStepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeStepRecyclerViewAdapter.ViewHolder> {
+public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.ViewHolder> {
 
     private final List<Step> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public RecipeStepRecyclerViewAdapter(List<Step> items, OnListFragmentInteractionListener listener) {
+    public RecipeStepAdapter(List<Step> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
