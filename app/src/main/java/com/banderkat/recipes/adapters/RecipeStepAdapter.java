@@ -1,11 +1,16 @@
 package com.banderkat.recipes.adapters;
 
+import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
+import android.support.v7.recyclerview.extensions.ListAdapter;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.banderkat.recipes.BR;
 import com.banderkat.recipes.R;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.fragments.RecipeStepFragment.OnListFragmentInteractionListener;
@@ -15,61 +20,69 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Step} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
-public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.ViewHolder> {
+public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewHolder> {
 
-    private final List<Step> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private List<Step> recipeSteps;
+    private OnListFragmentInteractionListener listener;
+    private LayoutInflater inflater;
 
-    public RecipeStepAdapter(List<Step> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ViewDataBinding binding;
+
+        private ViewHolder(ViewDataBinding binding, final OnListFragmentInteractionListener listener) {
+            super(binding.getRoot());
+            // FIXME: how to get at step item from here for getAdapterPosition() ?
+            binding.getRoot().setOnClickListener(v -> listener.onListFragmentInteraction(null));
+            this.binding = binding;
+        }
+
+        public void bind(Step step, Context context) {
+            binding.setVariable(BR.step, step);
+            Log.d("stepadapter", step.getDescription());
+            binding.executePendingBindings();
+        }
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_step, parent, false);
-        return new ViewHolder(view);
+    public RecipeStepAdapter(Context context, List<Step> items, OnListFragmentInteractionListener listener) {
+        this();
+        this.recipeSteps = items;
+        this.listener = listener;
+
+        this.inflater = LayoutInflater.from(context);
     }
 
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getShortDescription());
-        holder.mContentView.setText(mValues.get(position).getDescription());
+    private RecipeStepAdapter() {
+        super(new DiffUtil.ItemCallback<Step>() {
 
-        holder.mView.setOnClickListener(v -> {
-            if (null != mListener) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
-                mListener.onListFragmentInteraction(holder.mItem);
+            @Override
+            public boolean areItemsTheSame(Step oldItem, Step newItem) {
+                // Returns true if these are for the same attraction; properties may differ.
+                return oldItem.getId() == newItem.getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(Step oldItem, Step newItem) {
+                return oldItem.equals(newItem);
             }
         });
     }
 
     @Override
-    public int getItemCount() {
-        return mValues.size();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        ViewDataBinding binding = DataBindingUtil.inflate(inflater,
+                R.layout.recipe_step_item, parent, false);
+        return new RecipeStepAdapter.ViewHolder(binding, this.listener);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Step mItem;
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        Step step = recipeSteps.get(position);
+        holder.bind(step, holder.itemView.getContext());
+    }
 
-        public ViewHolder(View view) {
-            super(view);
-            mView = view;
-            mIdView = view.findViewById(R.id.item_number);
-            mContentView = view.findViewById(R.id.content);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
+    @Override
+    public int getItemCount() {
+        return recipeSteps.size();
     }
 }

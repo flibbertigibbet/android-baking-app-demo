@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
 import com.banderkat.recipes.data.models.Recipe;
+import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Resource;
 
 import java.util.List;
@@ -27,6 +28,10 @@ public class RecipeViewModel extends ViewModel {
 
     public LiveData<Resource<List<Recipe>>> getRecipes() {
         return recipes;
+    }
+
+    public LiveData<Recipe> getRecipe(long id) {
+        return recipeRepository.getRecipe(id);
     }
 
 }

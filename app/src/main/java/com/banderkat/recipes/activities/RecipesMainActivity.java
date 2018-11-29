@@ -3,6 +3,9 @@ package com.banderkat.recipes.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +21,7 @@ import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Status;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
+import com.banderkat.recipes.fragments.RecipeStepFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class RecipesMainActivity extends AppCompatActivity
-        implements RecipeListAdapter.RecipeListItemClickListener {
+        implements RecipeListAdapter.RecipeListItemClickListener, RecipeStepFragment.OnListFragmentInteractionListener {
 
     private static final String LOG_LABEL = "MainActivity";
     private static final int RECIPE_CARD_WIDTH = 300;
@@ -40,6 +44,12 @@ public class RecipesMainActivity extends AppCompatActivity
     private RecipeListAdapter recipeListAdapter;
     private TextView noDataTextView;
 
+    private int spanCount;
+
+    public RecipeViewModel getViewModel() {
+        return viewModel;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +63,7 @@ public class RecipesMainActivity extends AppCompatActivity
 
         Log.d(LOG_LABEL, "Display width in DP: " + screenWidthDp);
 
-        int spanCount = screenWidthDp / RECIPE_CARD_WIDTH;
+        spanCount = screenWidthDp / RECIPE_CARD_WIDTH;
         if (spanCount == 0) {
             spanCount = 1;
         }
@@ -66,7 +76,10 @@ public class RecipesMainActivity extends AppCompatActivity
         noDataTextView = findViewById(R.id.recipe_list_no_data);
         recipeList = new ArrayList<>();
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment listFragment = fragmentManager.findFragmentById(R.id.recipe_list_fragment);
+
+        viewModel = ViewModelProviders.of(listFragment, viewModelFactory).get(RecipeViewModel.class);
         viewModel.getRecipes().observe(this, recipeResource -> {
             if (recipeResource == null) {
                 Log.e(LOG_LABEL, "No network resource found");
@@ -127,5 +140,24 @@ public class RecipesMainActivity extends AppCompatActivity
     @Override
     public void clickedRecipe(int position) {
         Log.d(LOG_LABEL, "Clicked recipe at position: " + position);
+
+        Recipe recipe = recipeList.get(position);
+        Log.d(LOG_LABEL, "Recipe name: " + recipe.getName());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        Fragment fragment = RecipeStepFragment.newInstance(spanCount, recipe.getId());
+
+        transaction.replace(R.id.recipe_list_fragment, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        fragmentManager.executePendingTransactions();
+    }
+
+    @Override
+    public void onListFragmentInteraction(Step item) {
+        Log.d(LOG_LABEL, "hey, that tickles!");
     }
 }
