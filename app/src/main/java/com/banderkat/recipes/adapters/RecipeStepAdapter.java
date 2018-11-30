@@ -32,14 +32,12 @@ public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewH
 
         private ViewHolder(ViewDataBinding binding, final OnListFragmentInteractionListener listener) {
             super(binding.getRoot());
-            // FIXME: how to get at step item from here for getAdapterPosition() ?
-            binding.getRoot().setOnClickListener(v -> listener.onListFragmentInteraction(null));
+            binding.getRoot().setOnClickListener(v -> listener.onListFragmentInteraction(getAdapterPosition()));
             this.binding = binding;
         }
 
         public void bind(Step step, Context context) {
             binding.setVariable(BR.step, step);
-            Log.d("stepadapter", step.getDescription());
             binding.executePendingBindings();
         }
     }

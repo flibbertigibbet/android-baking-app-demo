@@ -10,17 +10,6 @@
     android:background="@android:color/darker_gray"
     tools:context=".fragments.RecipeStepFragment">
 
-    <TextView
-        android:id="@+id/recipe_list_no_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/no_recipes"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recipe_step_recycler_view"
         tools:listitem="@layout/fragment_step"

@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +44,10 @@ public class RecipesMainActivity extends AppCompatActivity
     private RecipeListAdapter recipeListAdapter;
     private TextView noDataTextView;
 
+    /** Share a single, lazily instantiated view model between the fragments managed by this activity.
+     *
+     * @return recipe view model
+     */
     public RecipeViewModel getViewModel() {
         if (viewModel == null) {
             viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
@@ -86,14 +89,8 @@ public class RecipesMainActivity extends AppCompatActivity
         noDataTextView = findViewById(R.id.recipe_list_no_data);
         recipeList = new ArrayList<>();
 
-        //FragmentManager fragmentManager = getSupportFragmentManager();
-        //Fragment listFragment = fragmentManager.findFragmentById(R.id.recipe_list_fragment);
-
-        //Log.d(LOG_LABEL, "Found list fragment " + listFragment.getId());
-
         // Lazily initialize view model, if it's not already set
-        getViewModel();
-        viewModel.getRecipes().observe(this, recipeResource -> {
+        getViewModel().getRecipes().observe(this, recipeResource -> {
             if (recipeResource == null) {
                 Log.e(LOG_LABEL, "No network resource found");
                 return;
@@ -170,8 +167,8 @@ public class RecipesMainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Step item) {
-        Log.d(LOG_LABEL, "hey, that tickles!");
+    public void onListFragmentInteraction(int position) {
+        Log.d(LOG_LABEL, "Clicked step at position: " + position);
     }
 
     @Override

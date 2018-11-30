@@ -17,7 +17,6 @@ import com.banderkat.recipes.activities.RecipesMainActivity;
 import com.banderkat.recipes.adapters.RecipeStepAdapter;
 import com.banderkat.recipes.data.RecipeViewModel;
 import com.banderkat.recipes.data.models.Recipe;
-import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
 
 import javax.inject.Inject;
@@ -128,17 +127,7 @@ public class RecipeStepFragment extends Fragment {
         interactionListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Step item);
+        void onListFragmentInteraction(int position);
     }
 }
