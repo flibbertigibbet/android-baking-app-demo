@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -44,19 +45,15 @@ public class RecipesMainActivity extends AppCompatActivity
     private RecipeListAdapter recipeListAdapter;
     private TextView noDataTextView;
 
-    private int spanCount;
-
     public RecipeViewModel getViewModel() {
+        if (viewModel == null) {
+            viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
+        }
         return viewModel;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipes);
-
-        RecyclerView.LayoutManager layoutManager;
-
+    public int getGridSpanCount() {
+        int spanCount = 1;
         // Get display width, in DP, to determine number of card columns to display
         Configuration configuration = getResources().getConfiguration();
         int screenWidthDp = configuration.screenWidthDp;
@@ -67,7 +64,20 @@ public class RecipesMainActivity extends AppCompatActivity
         if (spanCount == 0) {
             spanCount = 1;
         }
+        return spanCount;
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d(LOG_LABEL, "main activity onCreate");
+
+        setContentView(R.layout.activity_recipes);
+
+        RecyclerView.LayoutManager layoutManager;
+
+        int spanCount = getGridSpanCount();
         layoutManager = new GridLayoutManager(this, spanCount);
 
         recipeListRecyclerView = findViewById(R.id.recipe_list_recycler_view);
@@ -76,10 +86,13 @@ public class RecipesMainActivity extends AppCompatActivity
         noDataTextView = findViewById(R.id.recipe_list_no_data);
         recipeList = new ArrayList<>();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment listFragment = fragmentManager.findFragmentById(R.id.recipe_list_fragment);
+        //FragmentManager fragmentManager = getSupportFragmentManager();
+        //Fragment listFragment = fragmentManager.findFragmentById(R.id.recipe_list_fragment);
 
-        viewModel = ViewModelProviders.of(listFragment, viewModelFactory).get(RecipeViewModel.class);
+        //Log.d(LOG_LABEL, "Found list fragment " + listFragment.getId());
+
+        // Lazily initialize view model, if it's not already set
+        getViewModel();
         viewModel.getRecipes().observe(this, recipeResource -> {
             if (recipeResource == null) {
                 Log.e(LOG_LABEL, "No network resource found");
@@ -147,9 +160,9 @@ public class RecipesMainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Fragment fragment = RecipeStepFragment.newInstance(spanCount, recipe.getId());
+        Fragment fragment = RecipeStepFragment.newInstance(recipe.getId());
 
-        transaction.replace(R.id.recipe_list_fragment, fragment);
+        transaction.replace(R.id.recipe_activity_layout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
 
@@ -159,5 +172,15 @@ public class RecipesMainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(Step item) {
         Log.d(LOG_LABEL, "hey, that tickles!");
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.d(LOG_LABEL, "onBackPressed");
+
+        // TODO: check the currently showing fragment, to support back to recipe step
+        // currently assume if back pressed, got back to list view
+        setTitle(getString(R.string.app_name));
     }
 }

@@ -11,6 +11,8 @@ import com.banderkat.recipes.R;
 
 public class RecipeListFragment extends Fragment {
 
+    private static final String LOG_LABEL = "RecipeListFragment";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

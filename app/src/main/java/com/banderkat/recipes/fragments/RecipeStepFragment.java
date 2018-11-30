@@ -1,9 +1,8 @@
 package com.banderkat.recipes.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.arch.lifecycle.ViewModelStore;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,17 +32,15 @@ public class RecipeStepFragment extends Fragment {
 
     public static final String LOG_LABEL = "StepFragment";
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String ARG_RECIPE_ID = "recipe-id";
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
     RecipeViewModel viewModel;
 
-    private int columnCount = 1;
     private long recipeId;
     private Recipe recipe;
-    private OnListFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener interactionListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -54,10 +51,9 @@ public class RecipeStepFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static RecipeStepFragment newInstance(int columnCount, long recipeId) {
+    public static RecipeStepFragment newInstance(long recipeId) {
         RecipeStepFragment fragment = new RecipeStepFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putLong(ARG_RECIPE_ID, recipeId);
         fragment.setArguments(args);
         return fragment;
@@ -69,7 +65,6 @@ public class RecipeStepFragment extends Fragment {
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            columnCount = bundle.getInt(ARG_COLUMN_COUNT);
             recipeId = bundle.getLong(ARG_RECIPE_ID);
 
             Log.d(LOG_LABEL, "Getting recipe for steps list...");
@@ -81,15 +76,17 @@ public class RecipeStepFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_step_list, container, false);
 
         Log.d(LOG_LABEL, "create step fragment for recipe " + recipeId);
+
+        View view = inflater.inflate(R.layout.fragment_step_list, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.recipe_step_recycler_view);
 
         // Set the adapter
         Context context = view.getContext();
 
+        int columnCount = ((RecipesMainActivity) getActivity()).getGridSpanCount();
         if (columnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {
@@ -100,18 +97,25 @@ public class RecipeStepFragment extends Fragment {
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
             Log.d(LOG_LABEL, "Got recipe " + recipe.getName());
-            recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipe.getSteps(), mListener));
+            getActivity().setTitle(recipe.getName());
+            recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipe.getSteps(), interactionListener));
         });
 
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_LABEL, "onSaveInstanceState");
+        outState.putLong(ARG_RECIPE_ID, recipeId);
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+            interactionListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -121,7 +125,7 @@ public class RecipeStepFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        interactionListener = null;
     }
 
     /**
