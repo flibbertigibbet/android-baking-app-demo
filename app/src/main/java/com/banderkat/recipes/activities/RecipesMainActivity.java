@@ -2,8 +2,10 @@ package com.banderkat.recipes.activities;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +21,7 @@ import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Status;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
-import com.banderkat.recipes.fragments.RecipeListFragment;
+import com.banderkat.recipes.fragments.RecipeStepFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class RecipesMainActivity extends AppCompatActivity
-        implements RecipeListAdapter.RecipeListItemClickListener, RecipeListFragment.OnFragmentInteractionListener {
+        implements RecipeListAdapter.RecipeListItemClickListener, RecipeStepFragment.OnListFragmentInteractionListener {
 
     private static final String LOG_LABEL = "MainActivity";
     private static final int RECIPE_CARD_WIDTH = 300;
@@ -42,24 +44,43 @@ public class RecipesMainActivity extends AppCompatActivity
     private RecipeListAdapter recipeListAdapter;
     private TextView noDataTextView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipes);
+    /** Share a single, lazily instantiated view model between the fragments managed by this activity.
+     *
+     * @return recipe view model
+     */
+    public RecipeViewModel getViewModel() {
+        if (viewModel == null) {
+            viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
+        }
+        return viewModel;
+    }
 
-        RecyclerView.LayoutManager layoutManager;
-
+    public int getGridSpanCount() {
+        int spanCount = 1;
         // Get display width, in DP, to determine number of card columns to display
         Configuration configuration = getResources().getConfiguration();
         int screenWidthDp = configuration.screenWidthDp;
 
         Log.d(LOG_LABEL, "Display width in DP: " + screenWidthDp);
 
-        int spanCount = screenWidthDp / RECIPE_CARD_WIDTH;
+        spanCount = screenWidthDp / RECIPE_CARD_WIDTH;
         if (spanCount == 0) {
             spanCount = 1;
         }
+        return spanCount;
+    }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d(LOG_LABEL, "main activity onCreate");
+
+        setContentView(R.layout.activity_recipes);
+
+        RecyclerView.LayoutManager layoutManager;
+
+        int spanCount = getGridSpanCount();
         layoutManager = new GridLayoutManager(this, spanCount);
 
         recipeListRecyclerView = findViewById(R.id.recipe_list_recycler_view);
@@ -68,8 +89,8 @@ public class RecipesMainActivity extends AppCompatActivity
         noDataTextView = findViewById(R.id.recipe_list_no_data);
         recipeList = new ArrayList<>();
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
-        viewModel.getRecipes().observe(this, recipeResource -> {
+        // Lazily initialize view model, if it's not already set
+        getViewModel().getRecipes().observe(this, recipeResource -> {
             if (recipeResource == null) {
                 Log.e(LOG_LABEL, "No network resource found");
                 return;
@@ -129,10 +150,34 @@ public class RecipesMainActivity extends AppCompatActivity
     @Override
     public void clickedRecipe(int position) {
         Log.d(LOG_LABEL, "Clicked recipe at position: " + position);
+
+        Recipe recipe = recipeList.get(position);
+        Log.d(LOG_LABEL, "Recipe name: " + recipe.getName());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        Fragment fragment = RecipeStepFragment.newInstance(recipe.getId());
+
+        transaction.replace(R.id.recipe_activity_layout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        fragmentManager.executePendingTransactions();
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.d(LOG_LABEL, "Fragment interaction callback");
+    public void onListFragmentInteraction(int position) {
+        Log.d(LOG_LABEL, "Clicked step at position: " + position);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.d(LOG_LABEL, "onBackPressed");
+
+        // TODO: check the currently showing fragment, to support back to recipe step
+        // currently assume if back pressed, got back to list view
+        setTitle(getString(R.string.app_name));
     }
 }
