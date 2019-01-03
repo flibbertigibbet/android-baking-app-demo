@@ -22,6 +22,7 @@ import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.data.networkresource.Status;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
 import com.banderkat.recipes.fragments.RecipeStepFragment;
+import com.banderkat.recipes.fragments.StepDetailFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,6 +170,18 @@ public class RecipesMainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(long recipeId, int position) {
         Log.d(LOG_LABEL, "Clicked recipe step at position: " + position + " for recipe " + recipeId);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        Fragment fragment = StepDetailFragment.newInstance(recipeId, position);
+
+        // FIXME: re-shows list fragment
+        transaction.replace(R.id.recipe_activity_layout, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        fragmentManager.executePendingTransactions();
     }
 
     @Override
