@@ -48,8 +48,6 @@ public class RecipeStepFragment extends Fragment {
     public RecipeStepFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static RecipeStepFragment newInstance(long recipeId) {
         RecipeStepFragment fragment = new RecipeStepFragment();
         Bundle args = new Bundle();
@@ -97,7 +95,7 @@ public class RecipeStepFragment extends Fragment {
             this.recipe = foundRecipe;
             Log.d(LOG_LABEL, "Got recipe " + recipe.getName());
             getActivity().setTitle(recipe.getName());
-            recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipe.getSteps(), interactionListener));
+            recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipeId, recipe.getSteps(), interactionListener));
         });
 
         return view;
@@ -128,6 +126,6 @@ public class RecipeStepFragment extends Fragment {
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(int position);
+        void onListFragmentInteraction(long recipeId, int position);
     }
 }

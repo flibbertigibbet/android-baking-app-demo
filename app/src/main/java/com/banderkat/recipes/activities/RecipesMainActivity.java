@@ -167,8 +167,8 @@ public class RecipesMainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(int position) {
-        Log.d(LOG_LABEL, "Clicked step at position: " + position);
+    public void onListFragmentInteraction(long recipeId, int position) {
+        Log.d(LOG_LABEL, "Clicked recipe step at position: " + position + " for recipe " + recipeId);
     }
 
     @Override
