@@ -63,9 +63,6 @@ public class RecipeStepFragment extends Fragment {
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             recipeId = bundle.getLong(ARG_RECIPE_ID);
-
-            Log.d(LOG_LABEL, "Getting recipe for steps list...");
-
             viewModel = ((RecipesMainActivity) getActivity()).getViewModel();
         }
     }
@@ -77,7 +74,6 @@ public class RecipeStepFragment extends Fragment {
         Log.d(LOG_LABEL, "create step fragment for recipe " + recipeId);
 
         View view = inflater.inflate(R.layout.fragment_step_list, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.recipe_step_recycler_view);
 
         // Set the adapter
@@ -110,6 +106,7 @@ public class RecipeStepFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d(LOG_LABEL, "step list attaching");
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             interactionListener = (OnListFragmentInteractionListener) context;
@@ -121,6 +118,7 @@ public class RecipeStepFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d(LOG_LABEL, "step list detaching");
         super.onDetach();
         interactionListener = null;
     }

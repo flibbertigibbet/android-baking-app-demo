@@ -47,8 +47,8 @@ public class StepDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RecipeStepFragment newInstance(long recipeId, int stepId) {
-        RecipeStepFragment fragment = new RecipeStepFragment();
+    public static StepDetailFragment newInstance(long recipeId, int stepId) {
+        StepDetailFragment fragment = new StepDetailFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_RECIPE_ID, recipeId);
         args.putInt(ARG_STEP_ID, stepId);
@@ -64,8 +64,6 @@ public class StepDetailFragment extends Fragment {
             Bundle bundle = getArguments();
             recipeId = bundle.getLong(ARG_RECIPE_ID);
             stepId = bundle.getInt(ARG_STEP_ID);
-
-            Log.d(LOG_LABEL, "Getting recipe for steps detail...");
             viewModel = ((RecipesMainActivity) getActivity()).getViewModel();
         }
     }
@@ -90,7 +88,6 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(LOG_LABEL, "onSaveInstanceState");
         outState.putLong(ARG_RECIPE_ID, recipeId);
     }
 
