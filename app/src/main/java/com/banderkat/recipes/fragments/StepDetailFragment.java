@@ -1,6 +1,8 @@
 package com.banderkat.recipes.fragments;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,11 +12,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.banderkat.recipes.BR;
 import com.banderkat.recipes.R;
 import com.banderkat.recipes.activities.RecipesMainActivity;
 import com.banderkat.recipes.data.RecipeViewModel;
 import com.banderkat.recipes.data.models.Recipe;
+import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import javax.inject.Inject;
 
@@ -40,6 +52,7 @@ public class StepDetailFragment extends Fragment {
     private long recipeId;
     private int stepId;
     private Recipe recipe;
+    private Step step;
 
     private OnStepDetailInteractionListener interactionListener;
 
@@ -74,12 +87,40 @@ public class StepDetailFragment extends Fragment {
 
         Log.d(LOG_LABEL, "create step fragment for recipe " + recipeId);
 
-        View view = inflater.inflate(R.layout.fragment_step_detail, container, false);
+        ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_step_detail, container, false);
+        View view = binding.getRoot();
 
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
             Log.d(LOG_LABEL, "Got recipe for step detail: " + recipe.getName());
+
+            step = recipe.getSteps().get(stepId);
+
+            Log.d(LOG_LABEL, "Got step detail " + step.getShortDescription() + " for recipe " + recipe.getName());
             getActivity().setTitle(recipe.getName());
+            binding.setVariable(BR.step, step);
+
+            PlayerView playerView = view.findViewById(R.id.step_detail_player_view);
+            if (!step.getVideoURL().isEmpty()) {
+                Context context = view.getContext();
+                SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context);
+                playerView.setPlayer(player);
+
+                Uri videoUri = Uri.parse(step.getVideoURL());
+                Log.d(LOG_LABEL, "Going to load video from " + videoUri.toString());
+                // Produces DataSource instances through which media data is loaded.
+                DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                        Util.getUserAgent(context, "yourApplicationName"));
+                // This is the MediaSource representing the media to be played.
+                MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(videoUri);
+
+                // Prepare the player with the source.
+                player.prepare(videoSource);
+            } else {
+                Log.d(LOG_LABEL, "No video for step " + step.getShortDescription());
+                playerView.setVisibility(View.GONE);
+            }
         });
 
         return view;
