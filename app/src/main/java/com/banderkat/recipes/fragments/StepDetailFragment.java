@@ -18,6 +18,7 @@ import com.banderkat.recipes.BR;
 import com.banderkat.recipes.R;
 import com.banderkat.recipes.activities.RecipesMainActivity;
 import com.banderkat.recipes.data.RecipeViewModel;
+import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.databinding.FragmentStepDetailBinding;
@@ -30,6 +31,8 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -107,6 +110,9 @@ public class StepDetailFragment extends Fragment {
             step = recipe.getSteps().get(stepId);
 
             Log.d(LOG_LABEL, "Got step detail " + step.getShortDescription() + " for recipe " + recipe.getName());
+
+            // TODO: Show ingredients list on initial step
+            List<Ingredient> ingredients = recipe.getIngredients();
 
             actionBar.setTitle(recipe.getName());
             binding.setVariable(BR.step, step);
