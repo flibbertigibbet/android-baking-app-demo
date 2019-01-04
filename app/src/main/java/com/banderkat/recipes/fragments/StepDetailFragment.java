@@ -1,12 +1,14 @@
 package com.banderkat.recipes.fragments;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,6 +124,15 @@ public class StepDetailFragment extends Fragment {
                 playerView.setVisibility(View.GONE);
             }
         });
+
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d(LOG_LABEL, "in landscape");
+            activity.getSupportActionBar().hide();
+        } else {
+            Log.d(LOG_LABEL, "in portrait");
+            activity.getSupportActionBar().show();
+        }
 
         return view;
     }

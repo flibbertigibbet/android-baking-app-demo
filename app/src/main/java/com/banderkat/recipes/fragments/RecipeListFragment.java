@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -43,7 +44,6 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
         Log.d(LOG_LABEL, "create recipe list view");
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
         activity = (RecipesMainActivity)getActivity();
-        activity.setTitle(getString(R.string.app_name));
 
         recipeListRecyclerView = view.findViewById(R.id.recipe_list_recycler_view);
 
@@ -92,6 +92,16 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
         });
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Log.d(LOG_LABEL, "onViewCreated");
+        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setTitle(getString(R.string.app_name));
+        actionBar.show();
     }
 
     private void loadData() {

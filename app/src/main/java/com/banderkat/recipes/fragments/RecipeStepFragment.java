@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -90,7 +92,9 @@ public class RecipeStepFragment extends Fragment {
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
             Log.d(LOG_LABEL, "Got recipe " + recipe.getName());
-            getActivity().setTitle(recipe.getName());
+            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            actionBar.setTitle(recipe.getName());
+            actionBar.show();
             recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipeId, recipe.getSteps(), interactionListener));
         });
 
