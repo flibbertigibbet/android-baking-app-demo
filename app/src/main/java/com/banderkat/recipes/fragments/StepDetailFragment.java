@@ -3,11 +3,11 @@ package com.banderkat.recipes.fragments;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +20,7 @@ import com.banderkat.recipes.activities.RecipesMainActivity;
 import com.banderkat.recipes.data.RecipeViewModel;
 import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.models.Step;
+import com.banderkat.recipes.databinding.FragmentStepDetailBinding;
 import com.banderkat.recipes.di.RecipeViewModelFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -55,6 +56,8 @@ public class StepDetailFragment extends Fragment {
     private int stepId;
     private Recipe recipe;
     private Step step;
+    private RecipesMainActivity activity;
+    private SimpleExoPlayer player;
 
     private OnStepDetailInteractionListener interactionListener;
 
@@ -75,11 +78,13 @@ public class StepDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = (RecipesMainActivity) getActivity();
+
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             recipeId = bundle.getLong(ARG_RECIPE_ID);
             stepId = bundle.getInt(ARG_STEP_ID);
-            viewModel = ((RecipesMainActivity) getActivity()).getViewModel();
+            viewModel = activity.getViewModel();
         }
     }
 
@@ -89,8 +94,11 @@ public class StepDetailFragment extends Fragment {
 
         Log.d(LOG_LABEL, "create step fragment for recipe " + recipeId);
 
-        ViewDataBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_step_detail, container, false);
+        FragmentStepDetailBinding binding = DataBindingUtil.inflate(inflater,
+                R.layout.fragment_step_detail, container, false);
         View view = binding.getRoot();
+
+        ActionBar actionBar = activity.getSupportActionBar();
 
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
@@ -99,13 +107,22 @@ public class StepDetailFragment extends Fragment {
             step = recipe.getSteps().get(stepId);
 
             Log.d(LOG_LABEL, "Got step detail " + step.getShortDescription() + " for recipe " + recipe.getName());
-            getActivity().setTitle(recipe.getName());
+
+            actionBar.setTitle(recipe.getName());
             binding.setVariable(BR.step, step);
 
-            PlayerView playerView = view.findViewById(R.id.step_detail_player_view);
+            if (stepId != 0) {
+                binding.stepDetailPrevBtn.setVisibility(View.VISIBLE);
+            }
+
+            if (stepId < recipe.getSteps().size() - 1) {
+                binding.stepDetailNextBtn.setVisibility(View.VISIBLE);
+            }
+
+            PlayerView playerView = binding.stepDetailPlayerView;
             if (!step.getVideoURL().isEmpty()) {
                 Context context = view.getContext();
-                SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(context);
+                player = ExoPlayerFactory.newSimpleInstance(context);
                 playerView.setPlayer(player);
 
                 Uri videoUri = Uri.parse(step.getVideoURL());
@@ -125,14 +142,24 @@ public class StepDetailFragment extends Fragment {
             }
         });
 
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Log.d(LOG_LABEL, "in landscape");
-            activity.getSupportActionBar().hide();
+            actionBar.hide();
         } else {
             Log.d(LOG_LABEL, "in portrait");
-            activity.getSupportActionBar().show();
+            actionBar.show();
         }
+
+        // Set handlers for prev/next buttons
+        binding.stepDetailPrevBtn.setOnClickListener(v -> {
+            Log.d(LOG_LABEL, "Go to previous step");
+            activity.goToRecipeStepDetail(recipeId, stepId - 1);
+        });
+
+        binding.stepDetailNextBtn.setOnClickListener(v -> {
+            Log.d(LOG_LABEL, "Go to next step");
+            activity.goToRecipeStepDetail(recipeId, stepId + 1);
+        });
 
         return view;
     }
@@ -154,8 +181,20 @@ public class StepDetailFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(LOG_LABEL, "onStop");
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+    @Override
     public void onDetach() {
+        Log.d(LOG_LABEL, "onDetach");
         super.onDetach();
+        activity = null;
         interactionListener = null;
     }
 

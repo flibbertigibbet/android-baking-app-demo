@@ -95,24 +95,21 @@ public class RecipesMainActivity extends AppCompatActivity
         fragmentManager.executePendingTransactions();
     }
 
-    @Override
-    public void onListFragmentInteraction(long recipeId, int position) {
-        Log.d(LOG_LABEL, "Clicked recipe step at position: " + position + " for recipe " + recipeId);
-
+    public void goToRecipeStepDetail(long recipeId, int position) {
+        Log.d(LOG_LABEL, "Loading detail for step at position " + position + " for recipe " + recipeId);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-
         Fragment fragment = StepDetailFragment.newInstance(recipeId, position);
-
-        Fragment mainFragment = fragmentManager.findFragmentByTag("step-list");
-
-        Log.d(LOG_LABEL, "Main fragment tag: " + mainFragment.getTag() + " id: " + getBaseContext().getResources().getResourceName(mainFragment.getId()));
-
         transaction.replace(R.id.fragment_container, fragment, "step-detail");
         transaction.addToBackStack("step-detail");
         transaction.commit();
-
         fragmentManager.executePendingTransactions();
+    }
+
+    @Override
+    public void onListFragmentInteraction(long recipeId, int position) {
+        Log.d(LOG_LABEL, "Clicked recipe step at position: " + position + " for recipe " + recipeId);
+        goToRecipeStepDetail(recipeId, position);
     }
 
     @Override
