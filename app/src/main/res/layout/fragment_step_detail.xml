@@ -39,8 +39,18 @@
                 android:text="@{step.id > 0 ? step.shortDescription : @string/ingredients_label}"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                 android:textSize="32sp"
-                app:layout_constraintBottom_toTopOf="@id/step_detail_item_detail"
+                app:layout_constraintBottom_toTopOf="@id/step_detail_ingredients"
                 app:layout_constraintTop_toBottomOf="@id/step_detail_player_view" />
+
+            <TextView
+                android:id="@+id/step_detail_ingredients"
+                android:layout_margin="32dp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                app:layout_constraintBottom_toTopOf="@+id/step_detail_item_detail"
+                app:layout_constraintTop_toBottomOf="@+id/step_detail_item_label"
+                android:visibility="@{step.id > 0 ? View.GONE : View.VISIBLE}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/step_detail_item_detail"
@@ -48,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="32dp"
                 android:text="@{step.description}"
+                android:visibility="@{step.id > 0 ? View.VISIBLE : View.GONE}"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                 app:layout_constraintBottom_toTopOf="@id/step_detail_bottom_bar"
                 app:layout_constraintTop_toBottomOf="@id/step_detail_item_label" />

@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,13 +111,18 @@ public class StepDetailFragment extends Fragment {
 
             Log.d(LOG_LABEL, "Got step detail " + step.getShortDescription() + " for recipe " + recipe.getName());
 
-            // TODO: Show ingredients list on initial step
-            List<Ingredient> ingredients = recipe.getIngredients();
-
             actionBar.setTitle(recipe.getName());
             binding.setVariable(BR.step, step);
-
-            if (stepId != 0) {
+            if (stepId == 0) {
+                Log.d(LOG_LABEL, "Show ingredients on first step");
+                List<Ingredient> ingredients = recipe.getIngredients();
+                String ingredientsText = "";
+                for (Ingredient ingredient : ingredients) {
+                    ingredientsText += ingredient.getIngredient() + ": " +
+                            ingredient.getQuantity() + ingredient.getMeasure() + "\n\n";
+                }
+                binding.stepDetailIngredients.setText(ingredientsText);
+            } else {
                 binding.stepDetailPrevBtn.setVisibility(View.VISIBLE);
             }
 
