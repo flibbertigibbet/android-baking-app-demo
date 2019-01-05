@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.banderkat.recipes.R;
 import com.banderkat.recipes.data.RecipeViewModel;
@@ -81,7 +82,6 @@ public class RecipesMainActivity extends AppCompatActivity
     public void goToStepList(long recipeId) {
         Log.d(LOG_LABEL, "go to step list for recipe ID: " + String.valueOf(recipeId));
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         Fragment fragment = RecipeStepFragment.newInstance(recipeId);
@@ -97,7 +97,6 @@ public class RecipesMainActivity extends AppCompatActivity
 
     public void goToRecipeStepDetail(long recipeId, int position) {
         Log.d(LOG_LABEL, "Loading detail for step at position " + position + " for recipe " + recipeId);
-        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = StepDetailFragment.newInstance(recipeId, position);
         transaction.replace(R.id.fragment_container, fragment, "step-detail");
@@ -113,7 +112,29 @@ public class RecipesMainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(LOG_LABEL, "picked menu item " + item);
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onUpPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
+
+    void onUpPressed() {
+        Log.d(LOG_LABEL, "handle up press");
+
+        if (fragmentManager.getBackStackEntryCount() > 1) {
+            Log.d(LOG_LABEL, "Navigate up to step list");
+            fragmentManager.popBackStackImmediate("step-list", 0);
+            fragmentManager.executePendingTransactions();
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
 }
