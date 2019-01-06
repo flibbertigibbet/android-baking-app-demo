@@ -2,4 +2,4 @@
 Demo recipe app
 
 ## Build status
-[![Build Status](https://travis-ci.org/flibbertigibbet/android-baking-app-demo.svg?branch=develop)](https://travis-ci.org/flibbertigibbet/android-baking-app-demo)
+[![CircleCI](https://circleci.com/gh/flibbertigibbet/android-baking-app-demo.svg?style=svg)](https://circleci.com/gh/flibbertigibbet/android-baking-app-demo)
