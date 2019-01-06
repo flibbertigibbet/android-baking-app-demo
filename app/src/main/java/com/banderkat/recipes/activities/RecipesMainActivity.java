@@ -28,7 +28,6 @@ public class RecipesMainActivity extends AppCompatActivity
     @Inject
     public RecipeViewModelFactory viewModelFactory;
     RecipeViewModel viewModel;
-    FragmentManager fragmentManager;
 
     /**
      * Share a single, lazily instantiated view model between the fragments managed by this activity.
@@ -68,7 +67,7 @@ public class RecipesMainActivity extends AppCompatActivity
                 return;
             }
 
-            fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = getSupportFragmentManager();
             RecipeListFragment fragment = new RecipeListFragment();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, fragment, "recipe-list");
@@ -82,6 +81,7 @@ public class RecipesMainActivity extends AppCompatActivity
     public void goToStepList(long recipeId) {
         Log.d(LOG_LABEL, "go to step list for recipe ID: " + String.valueOf(recipeId));
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         Fragment fragment = RecipeStepFragment.newInstance(recipeId);
@@ -97,6 +97,7 @@ public class RecipesMainActivity extends AppCompatActivity
 
     public void goToRecipeStepDetail(long recipeId, int position) {
         Log.d(LOG_LABEL, "Loading detail for step at position " + position + " for recipe " + recipeId);
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = StepDetailFragment.newInstance(recipeId, position);
         transaction.replace(R.id.fragment_container, fragment, "step-detail");
@@ -127,6 +128,7 @@ public class RecipesMainActivity extends AppCompatActivity
     void onUpPressed() {
         Log.d(LOG_LABEL, "handle up press");
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.getBackStackEntryCount() > 1) {
             Log.d(LOG_LABEL, "Navigate up to step list");
             fragmentManager.popBackStackImmediate("step-list", 0);

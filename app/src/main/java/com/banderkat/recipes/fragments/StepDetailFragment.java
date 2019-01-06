@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,6 +101,7 @@ public class StepDetailFragment extends Fragment {
         View view = binding.getRoot();
 
         ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
@@ -205,7 +205,6 @@ public class StepDetailFragment extends Fragment {
     public void onDetach() {
         Log.d(LOG_LABEL, "onDetach");
         super.onDetach();
-        activity = null;
         interactionListener = null;
     }
 
