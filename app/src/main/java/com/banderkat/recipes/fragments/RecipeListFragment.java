@@ -46,6 +46,10 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
 
         recipeListRecyclerView = view.findViewById(R.id.recipe_list_recycler_view);
 
+        if (activity.findViewById(R.id.fragment_detail_container) != null) {
+            activity.findViewById(R.id.fragment_detail_container).setVisibility(View.GONE);
+        }
+
         RecyclerView.LayoutManager layoutManager;
 
         int spanCount = activity.getGridSpanCount();

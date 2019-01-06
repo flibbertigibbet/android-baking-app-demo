@@ -2,8 +2,10 @@ package com.banderkat.recipes.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -33,7 +35,7 @@ public class RecipeStepFragment extends Fragment {
 
     public static final String LOG_LABEL = "StepFragment";
 
-    private static final String ARG_RECIPE_ID = "recipe-id";
+    public static final String ARG_RECIPE_ID = "recipe-id";
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
@@ -42,6 +44,7 @@ public class RecipeStepFragment extends Fragment {
     private long recipeId;
     private Recipe recipe;
     private OnListFragmentInteractionListener interactionListener;
+    private RecipesMainActivity activity;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -81,7 +84,24 @@ public class RecipeStepFragment extends Fragment {
         // Set the adapter
         Context context = view.getContext();
 
-        int columnCount = ((RecipesMainActivity) getActivity()).getGridSpanCount();
+        activity = (RecipesMainActivity) getActivity();
+
+        // Only show steps list as a grid outside of master-detail
+        int columnCount = 1;
+        if (activity.findViewById(R.id.fragment_detail_container) == null) {
+            columnCount = activity.getGridSpanCount();
+        } else {
+            Log.d(LOG_LABEL, "Showing detail view by step list");
+            activity.findViewById(R.id.fragment_detail_container).setVisibility(View.VISIBLE);
+
+            FragmentManager fragmentManager = getFragmentManager();
+            if (fragmentManager.getFragments().size() < 2) {
+                Log.w(LOG_LABEL, "Do not have detail fragment displayed yet");
+                // wait for the fragment transaction already in progress to add detail fragment
+                new Handler().post(() -> activity.goToRecipeStepDetail(recipeId, 0));
+            }
+        }
+
         if (columnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {

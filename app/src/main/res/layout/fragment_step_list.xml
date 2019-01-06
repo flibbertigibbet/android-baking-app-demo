@@ -12,6 +12,7 @@
     tools:context=".fragments.RecipeStepFragment">
 
     <android.support.v7.widget.RecyclerView
+        android:orientation="vertical"
         android:id="@+id/recipe_step_recycler_view"
         tools:listitem="@layout/fragment_step"
         app:layout_constraintBottom_toBottomOf="parent"

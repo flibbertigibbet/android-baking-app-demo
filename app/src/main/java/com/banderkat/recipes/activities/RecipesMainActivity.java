@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.banderkat.recipes.R;
 import com.banderkat.recipes.data.RecipeViewModel;
@@ -21,6 +22,10 @@ import javax.inject.Inject;
 
 public class RecipesMainActivity extends AppCompatActivity
         implements RecipeStepFragment.OnListFragmentInteractionListener {
+
+    public static final String STEP_LIST_FRAGMENT = "step-list";
+    public static final String STEP_DETAIL_FRAGMENT = "step-fragment";
+    public static final String RECIPE_LIST_FRAGMENT = "recipe-list";
 
     private static final String LOG_LABEL = "MainActivity";
     private static final int RECIPE_CARD_WIDTH = 300;
@@ -70,7 +75,7 @@ public class RecipesMainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             RecipeListFragment fragment = new RecipeListFragment();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.fragment_container, fragment, "recipe-list");
+            transaction.add(R.id.fragment_container, fragment, RECIPE_LIST_FRAGMENT);
             transaction.commit();
             fragmentManager.executePendingTransactions();
         } else {
@@ -83,15 +88,18 @@ public class RecipesMainActivity extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-
         Fragment fragment = RecipeStepFragment.newInstance(recipeId);
-        String tag = fragment.getTag();
+        transaction.replace(R.id.fragment_container, fragment, STEP_LIST_FRAGMENT);
 
-        Log.d(LOG_LABEL, "Step list fragment tag: " + tag + " id: " + String.valueOf(fragment.getId()));
-        transaction.replace(R.id.fragment_container, fragment, "step-list");
-        transaction.addToBackStack("step-list");
+        // Show first step by default in master-detail layout.
+        if (findViewById(R.id.fragment_detail_container) != null) {
+            Log.d(LOG_LABEL, "show details by step list");
+            findViewById(R.id.fragment_detail_container).setVisibility(View.VISIBLE);
+            Fragment stepFragment = StepDetailFragment.newInstance(recipeId, 0);
+            transaction.add(R.id.fragment_detail_container, stepFragment, STEP_DETAIL_FRAGMENT);
+        }
+        transaction.addToBackStack(STEP_LIST_FRAGMENT);
         transaction.commit();
-
         fragmentManager.executePendingTransactions();
     }
 
@@ -100,8 +108,15 @@ public class RecipesMainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = StepDetailFragment.newInstance(recipeId, position);
-        transaction.replace(R.id.fragment_container, fragment, "step-detail");
-        transaction.addToBackStack("step-detail");
+
+        // put in master-detail or to single fragment layout
+        if (findViewById(R.id.fragment_detail_container) != null) {
+            transaction.replace(R.id.fragment_detail_container, fragment, STEP_DETAIL_FRAGMENT);
+        } else {
+            transaction.replace(R.id.fragment_container, fragment, STEP_DETAIL_FRAGMENT);
+            transaction.addToBackStack(STEP_DETAIL_FRAGMENT);
+        }
+
         transaction.commit();
         fragmentManager.executePendingTransactions();
     }
@@ -131,12 +146,10 @@ public class RecipesMainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager.getBackStackEntryCount() > 1) {
             Log.d(LOG_LABEL, "Navigate up to step list");
-            fragmentManager.popBackStackImmediate("step-list", 0);
+            fragmentManager.popBackStackImmediate(STEP_LIST_FRAGMENT, 0);
             fragmentManager.executePendingTransactions();
         } else {
             super.onBackPressed();
         }
-
     }
-
 }
