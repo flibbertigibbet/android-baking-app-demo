@@ -29,6 +29,17 @@ android {
     dataBinding {
         enabled = true
     }
+
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+
+            all {
+                maxHeapSize = "1024m"
+            }
+        }
+    }
 }
 
 dependencies {
