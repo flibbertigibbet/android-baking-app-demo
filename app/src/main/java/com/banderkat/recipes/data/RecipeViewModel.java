@@ -2,6 +2,7 @@ package com.banderkat.recipes.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.banderkat.recipes.data.models.Recipe;
@@ -32,6 +33,10 @@ public class RecipeViewModel extends ViewModel {
 
     public LiveData<Recipe> getRecipe(long id) {
         return recipeRepository.getRecipe(id);
+    }
+
+    public Cursor getIngredients(long id) {
+        return recipeRepository.getIngredients(id);
     }
 
 }

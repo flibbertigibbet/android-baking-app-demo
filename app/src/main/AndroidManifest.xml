@@ -37,11 +37,18 @@
 
         <service
             android:name=".services.IngredientsWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
 
+        <provider
+            android:name=".IngredientsContentProvider"
+            android:authorities="com.banderkat.recipes.provider"
+            android:enabled="true"
+            android:exported="false">
+
+        </provider>
     </application>
 
 </manifest>

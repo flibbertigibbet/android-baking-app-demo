@@ -8,7 +8,9 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
+import android.database.Cursor;
 
+import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
 
 import java.util.List;
@@ -47,6 +49,11 @@ public abstract class RecipeDao {
             "FROM recipe " +
             "WHERE recipe.id = :recipeId ")
     public abstract LiveData<Recipe> getRecipe(long recipeId);
+
+    @Query("SELECT * " +
+            "FROM ingredient " +
+            "WHERE recipeId = :recipeId ")
+    public abstract Cursor getIngredients(long recipeId);
 
     @Transaction
     @Query("DELETE FROM recipe")

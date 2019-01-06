@@ -3,6 +3,7 @@ package com.banderkat.recipes.di;
 import android.app.Application;
 
 import com.banderkat.recipes.BakingApp;
+import com.banderkat.recipes.IngredientsContentProvider;
 
 import javax.inject.Singleton;
 
@@ -23,8 +24,8 @@ import dagger.android.AndroidInjectionModule;
         // Activities
         RecipesMainActivityModule.class,
 
-        // Servies
-        IngredientsWidgetServiceModule.class
+        IngredientsWidgetServiceModule.class,
+        IngredientsContentProviderModule.class
 })
 public interface AppComponent {
     @Component.Builder

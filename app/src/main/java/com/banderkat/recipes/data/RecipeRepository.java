@@ -1,6 +1,7 @@
 package com.banderkat.recipes.data;
 
 import android.arch.lifecycle.LiveData;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.banderkat.recipes.data.models.Recipe;
@@ -37,5 +38,9 @@ public class RecipeRepository {
                 return recipeDao.getAll();
             }
         }.getAsLiveData();
+    }
+
+    public Cursor getIngredients(long recipeId) {
+        return recipeDao.getIngredients(recipeId);
     }
 }
