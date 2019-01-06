@@ -8,6 +8,7 @@ import com.banderkat.recipes.data.RecipeDao;
 import com.banderkat.recipes.data.RecipeDatabase;
 import com.banderkat.recipes.data.RecipeWebservice;
 import com.banderkat.recipes.data.networkresource.LiveDataCallAdapterFactory;
+import com.banderkat.recipes.services.IngredientsWidgetService;
 
 import javax.inject.Singleton;
 
@@ -64,6 +65,12 @@ class AppModule {
     @Provides
     RecipeDao provideRecipeDao(RecipeDatabase db) {
         return db.recipeDao();
+    }
+
+    @Singleton
+    @Provides
+    IngredientsWidgetService provideIngredientsWidgetService() {
+        return new IngredientsWidgetService();
     }
 
 }

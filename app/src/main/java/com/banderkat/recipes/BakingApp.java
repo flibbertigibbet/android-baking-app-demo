@@ -2,6 +2,7 @@ package com.banderkat.recipes;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
 import android.util.Log;
 
 import com.banderkat.recipes.di.AppInjector;
@@ -11,14 +12,19 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
+import dagger.android.HasServiceInjector;
 
-public class BakingApp extends Application implements HasActivityInjector {
+public class BakingApp extends Application implements HasActivityInjector, HasServiceInjector {
 
     private static final String LOG_LABEL = "BakingApp";
 
     @SuppressWarnings("WeakerAccess")
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+
+    @SuppressWarnings("WeakerAccess")
+    @Inject
+    DispatchingAndroidInjector<Service> dispatchingServiceInjector;
 
     @Override
     public void onCreate() {
@@ -33,5 +39,10 @@ public class BakingApp extends Application implements HasActivityInjector {
     @Override
     public AndroidInjector<Activity> activityInjector() {
         return dispatchingAndroidInjector;
+    }
+
+    @Override
+    public AndroidInjector<Service> serviceInjector() {
+        return dispatchingServiceInjector;
     }
 }
