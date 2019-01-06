@@ -5,10 +5,12 @@ import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,10 +38,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.banderkat.recipes.activities.RecipesMainActivity.STEP_DETAIL_FRAGMENT;
+import static com.banderkat.recipes.activities.RecipesMainActivity.STEP_LIST_FRAGMENT;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnStepDetailInteractionListener} interface
  * to handle interaction events.
  * Use the {@link StepDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -48,8 +52,8 @@ public class StepDetailFragment extends Fragment {
 
     public static final String LOG_LABEL = "StepDetail";
 
-    private static final String ARG_RECIPE_ID = "recipe-id";
-    private static final String ARG_STEP_ID = "step-id";
+    public static final String ARG_RECIPE_ID = "recipe-id";
+    public static final String ARG_STEP_ID = "step-id";
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
@@ -61,8 +65,6 @@ public class StepDetailFragment extends Fragment {
     private Step step;
     private RecipesMainActivity activity;
     private SimpleExoPlayer player;
-
-    private OnStepDetailInteractionListener interactionListener;
 
     public StepDetailFragment() {
         // Required empty public constructor
@@ -102,6 +104,27 @@ public class StepDetailFragment extends Fragment {
         View view = binding.getRoot();
 
         ActionBar actionBar = activity.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        if (activity.findViewById(R.id.fragment_detail_container) != null) {
+            activity.findViewById(R.id.fragment_detail_container).setVisibility(View.VISIBLE);
+
+            // Handle rotate to landscape on tablet
+            if (container.findViewById(R.id.fragment_detail_container) == null) {
+                Log.d(LOG_LABEL, "Swapping details out of list container and adding list container");
+                FragmentManager fragmentManager = getFragmentManager();
+                // wait for the fragment transaction already in progress to redo fragment layout
+                new Handler().post(() -> {
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    Fragment listFragment = RecipeStepFragment.newInstance(recipeId);
+                    Fragment stepFragment = StepDetailFragment.newInstance(recipeId, stepId);
+                    transaction.replace(R.id.fragment_container, listFragment, STEP_LIST_FRAGMENT);
+                    transaction.add(R.id.fragment_detail_container, stepFragment, STEP_DETAIL_FRAGMENT);
+                    transaction.commit();
+                    fragmentManager.executePendingTransactions();
+                });
+            }
+        }
 
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
@@ -179,16 +202,12 @@ public class StepDetailFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(ARG_RECIPE_ID, recipeId);
+        outState.putInt(ARG_STEP_ID, stepId);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnStepDetailInteractionListener) {
-            interactionListener = (OnStepDetailInteractionListener) context;
-        } else {
-            Log.d(LOG_LABEL, "TODO: implement step detail interaction listener");
-        }
     }
 
     @Override
@@ -205,22 +224,5 @@ public class StepDetailFragment extends Fragment {
     public void onDetach() {
         Log.d(LOG_LABEL, "onDetach");
         super.onDetach();
-        activity = null;
-        interactionListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnStepDetailInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
