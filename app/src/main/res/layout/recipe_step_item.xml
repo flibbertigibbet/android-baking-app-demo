@@ -12,13 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:id="@+id/recipe_step_item_card"
+        android:id="@+id/step_detail_card"
         android:layout_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/recipe_step_list_item_label"
+            android:id="@+id/step_detail_item_label"
             android:text= "@{step.id > 0 ? `Step #` + String.valueOf(step.id) + `: ` + step.shortDescription : @string/ingredients_label}"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
             android:layout_margin="32dp"

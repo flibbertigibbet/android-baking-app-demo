@@ -4,11 +4,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -48,8 +53,6 @@ public class RecipeStepFragment extends Fragment {
     public RecipeStepFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static RecipeStepFragment newInstance(long recipeId) {
         RecipeStepFragment fragment = new RecipeStepFragment();
         Bundle args = new Bundle();
@@ -65,9 +68,6 @@ public class RecipeStepFragment extends Fragment {
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             recipeId = bundle.getLong(ARG_RECIPE_ID);
-
-            Log.d(LOG_LABEL, "Getting recipe for steps list...");
-
             viewModel = ((RecipesMainActivity) getActivity()).getViewModel();
         }
     }
@@ -79,7 +79,6 @@ public class RecipeStepFragment extends Fragment {
         Log.d(LOG_LABEL, "create step fragment for recipe " + recipeId);
 
         View view = inflater.inflate(R.layout.fragment_step_list, container, false);
-
         RecyclerView recyclerView = view.findViewById(R.id.recipe_step_recycler_view);
 
         // Set the adapter
@@ -96,8 +95,11 @@ public class RecipeStepFragment extends Fragment {
         viewModel.getRecipe(recipeId).observe(this, foundRecipe -> {
             this.recipe = foundRecipe;
             Log.d(LOG_LABEL, "Got recipe " + recipe.getName());
-            getActivity().setTitle(recipe.getName());
-            recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipe.getSteps(), interactionListener));
+            ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+            actionBar.setTitle(recipe.getName());
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.show();
+            recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipeId, recipe.getSteps(), interactionListener));
         });
 
         return view;
@@ -112,6 +114,7 @@ public class RecipeStepFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d(LOG_LABEL, "step list attaching");
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             interactionListener = (OnListFragmentInteractionListener) context;
@@ -123,11 +126,12 @@ public class RecipeStepFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d(LOG_LABEL, "step list detaching");
         super.onDetach();
         interactionListener = null;
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(int position);
+        void onListFragmentInteraction(long recipeId, int position);
     }
 }

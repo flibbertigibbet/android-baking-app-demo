@@ -6,7 +6,6 @@ import android.databinding.ViewDataBinding;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -24,15 +23,16 @@ import java.util.List;
 public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewHolder> {
 
     private List<Step> recipeSteps;
+    private long recipeId;
     private OnListFragmentInteractionListener listener;
     private LayoutInflater inflater;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewDataBinding binding;
 
-        private ViewHolder(ViewDataBinding binding, final OnListFragmentInteractionListener listener) {
+        private ViewHolder(ViewDataBinding binding, final OnListFragmentInteractionListener listener, long recipeId) {
             super(binding.getRoot());
-            binding.getRoot().setOnClickListener(v -> listener.onListFragmentInteraction(getAdapterPosition()));
+            binding.getRoot().setOnClickListener(v -> listener.onListFragmentInteraction(recipeId, getAdapterPosition()));
             this.binding = binding;
         }
 
@@ -42,9 +42,10 @@ public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewH
         }
     }
 
-    public RecipeStepAdapter(Context context, List<Step> items, OnListFragmentInteractionListener listener) {
+    public RecipeStepAdapter(Context context, long recipeId, List<Step> items, OnListFragmentInteractionListener listener) {
         this();
         this.recipeSteps = items;
+        this.recipeId = recipeId;
         this.listener = listener;
 
         this.inflater = LayoutInflater.from(context);
@@ -70,7 +71,7 @@ public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewH
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewDataBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.recipe_step_item, parent, false);
-        return new RecipeStepAdapter.ViewHolder(binding, this.listener);
+        return new RecipeStepAdapter.ViewHolder(binding, this.listener, this.recipeId);
     }
 
     @Override
