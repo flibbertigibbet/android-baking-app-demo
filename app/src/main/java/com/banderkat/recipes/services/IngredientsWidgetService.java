@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import android.widget.TextView;
 
 import com.banderkat.recipes.IngredientsContentProvider;
 import com.banderkat.recipes.R;
@@ -79,9 +80,8 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         // Get the data for this position from the content provider
 
         Log.d(LOG_LABEL, "getViewAt " + position);
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.ingredients_app_widget_item);
 
-        String text = "FIXME";
-        long recipeId = -1;
         if (mCursor.moveToPosition(position)) {
             final int ingredientIndex = mCursor.getColumnIndex("ingredients");
             final int recipeNameIndex = mCursor.getColumnIndex("name");
@@ -89,7 +89,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
             String ingredientsString = mCursor.getString(ingredientIndex);
             List<Ingredient> ingredientList = ingredientsConverter.toIngredientList(ingredientsString);
 
-            text = recipeName + ":\n\n";
+            String text = "";
             for (Ingredient ingredient: ingredientList) {
                 text += numberFormat.format(ingredient.getQuantity()) + " ";
                 if (!ingredient.getMeasure().contains("UNIT")) {
@@ -97,10 +97,10 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 }
                 text += ingredient.getIngredient() + "\n";
             }
-        }
 
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.ingredients_app_widget_item);
-        rv.setTextViewText(R.id.widget_item, text);
+            rv.setTextViewText(R.id.widget_item, text);
+            rv.setTextViewText(R.id.widget_item_recipe_name, recipeName);
+        }
 
         return rv;
     }

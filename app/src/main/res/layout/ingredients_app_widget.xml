@@ -1,8 +1,6 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="@dimen/widget_margin"
     android:background="#80000000"
     android:padding="@dimen/widget_margin">
@@ -14,8 +12,7 @@
         android:gravity="center"
         android:background="@color/cardview_dark_background"
         android:animateLayoutChanges="true"
-        android:loopViews="false" />
-
+        android:loopViews="true" />
     <TextView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
@@ -26,4 +23,4 @@
         android:text="@string/empty_view_text"
         android:textSize="20sp" />
 
-</RelativeLayout>
+</FrameLayout>
