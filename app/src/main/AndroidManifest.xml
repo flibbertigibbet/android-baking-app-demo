@@ -9,19 +9,46 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.banderkat.recipes.activities.RecipesMainActivity"
+            android:name=".activities.RecipesMainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".activities.IngredientsAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ingredients_app_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".services.IngredientsWidgetService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
+        </service>
+
+        <provider
+            android:name=".IngredientsContentProvider"
+            android:authorities="com.banderkat.recipes.provider"
+            android:enabled="true"
+            android:exported="true">
+
+        </provider>
     </application>
 
 </manifest>

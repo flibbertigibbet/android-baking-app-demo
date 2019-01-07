@@ -2,6 +2,7 @@ package com.banderkat.recipes.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.banderkat.recipes.data.models.Recipe;

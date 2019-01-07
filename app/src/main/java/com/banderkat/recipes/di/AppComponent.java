@@ -22,6 +22,9 @@ import dagger.android.AndroidInjectionModule;
 
         // Activities
         RecipesMainActivityModule.class,
+
+        IngredientsWidgetServiceModule.class,
+        IngredientsContentProviderModule.class
 })
 public interface AppComponent {
     @Component.Builder
