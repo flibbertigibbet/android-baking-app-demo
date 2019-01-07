@@ -3,6 +3,9 @@ package com.banderkat.recipes.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,10 +21,12 @@ import com.banderkat.recipes.fragments.RecipeListFragment;
 import com.banderkat.recipes.fragments.RecipeStepFragment;
 import com.banderkat.recipes.fragments.StepDetailFragment;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.inject.Inject;
 
 public class RecipesMainActivity extends AppCompatActivity
-        implements RecipeStepFragment.OnListFragmentInteractionListener {
+        implements RecipeStepFragment.OnListFragmentInteractionListener, IdlingResource  {
 
     public static final String STEP_LIST_FRAGMENT = "step-list";
     public static final String STEP_DETAIL_FRAGMENT = "step-fragment";
@@ -33,6 +38,11 @@ public class RecipesMainActivity extends AppCompatActivity
     @Inject
     public RecipeViewModelFactory viewModelFactory;
     RecipeViewModel viewModel;
+
+    private AtomicBoolean idle = new AtomicBoolean(true);
+
+    @Nullable
+    private volatile ResourceCallback espressoCallback;
 
     /**
      * Share a single, lazily instantiated view model between the fragments managed by this activity.
@@ -61,6 +71,10 @@ public class RecipesMainActivity extends AppCompatActivity
         return spanCount;
     }
 
+    public RecipesMainActivity() {
+        setIdleState(false);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +90,7 @@ public class RecipesMainActivity extends AppCompatActivity
             RecipeListFragment fragment = new RecipeListFragment();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, fragment, RECIPE_LIST_FRAGMENT);
-            transaction.commit();
+            transaction.commitNow();
             fragmentManager.executePendingTransactions();
         } else {
             Log.e(LOG_LABEL, "have no fragment container");
@@ -150,6 +164,32 @@ public class RecipesMainActivity extends AppCompatActivity
             fragmentManager.executePendingTransactions();
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public String getName() {
+        return this.getClass().getName();
+    }
+
+    @Override
+    public boolean isIdleNow() {
+        return idle.get();
+    }
+
+    @Override
+    public void registerIdleTransitionCallback(ResourceCallback callback) {
+        espressoCallback = callback;
+    }
+
+    /**
+     * Sets the new idle state, if isIdleNow is true, it pings the {@link ResourceCallback}.
+     * @param isIdleNow false if there are pending operations, true if idle.
+     */
+    public void setIdleState(boolean isIdleNow) {
+        idle.set(isIdleNow);
+        if (isIdleNow && espressoCallback != null) {
+            new Handler().postDelayed(() -> espressoCallback.onTransitionToIdle(), 2000);
         }
     }
 }
