@@ -35,8 +35,4 @@ public class RecipeViewModel extends ViewModel {
         return recipeRepository.getRecipe(id);
     }
 
-    public Cursor getIngredients(long id) {
-        return recipeRepository.getIngredients(id);
-    }
-
 }

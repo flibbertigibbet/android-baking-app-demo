@@ -3,7 +3,7 @@
     package="com.banderkat.recipes">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    
     <application
         android:name=".BakingApp"
         android:allowBackup="true"
@@ -46,7 +46,7 @@
             android:name=".IngredientsContentProvider"
             android:authorities="com.banderkat.recipes.provider"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
 
         </provider>
     </application>

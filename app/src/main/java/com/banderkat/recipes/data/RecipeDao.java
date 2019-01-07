@@ -51,9 +51,8 @@ public abstract class RecipeDao {
     public abstract LiveData<Recipe> getRecipe(long recipeId);
 
     @Query("SELECT * " +
-            "FROM ingredient " +
-            "WHERE recipeId = :recipeId ")
-    public abstract Cursor getIngredients(long recipeId);
+            "FROM recipe ")
+    public abstract Cursor getRecipeCursor();
 
     @Transaction
     @Query("DELETE FROM recipe")

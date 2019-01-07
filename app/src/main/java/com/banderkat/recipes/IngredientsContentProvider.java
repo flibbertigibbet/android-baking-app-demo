@@ -57,24 +57,14 @@ public class IngredientsContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
+        Log.d(LOG_LABEL,"query content provider for recipes");
 
         if (recipeDao == null) {
             Log.e(LOG_LABEL, "Failed to find injected DAO for content provider");
             return null;
         }
 
-        String query = uri.getLastPathSegment();
-        Log.d(LOG_LABEL, "Received ingredient query for " + query);
-
-
-        try {
-            long recipeId = Long.valueOf(query);
-            return recipeDao.getIngredients(recipeId);
-        } catch (NumberFormatException ex) {
-            Log.e(LOG_LABEL, "Could not parse recipe ID from " + query);
-        }
-
-        return null;
+        return recipeDao.getRecipeCursor();
     }
 
     @Override

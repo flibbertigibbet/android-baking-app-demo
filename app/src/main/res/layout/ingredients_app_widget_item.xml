@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:background="@color/colorPrimary"
+    android:padding="1dp"
+    android:gravity="center_vertical"
+    android:contentDescription="@string/appwidget_text"
+    android:text="@string/appwidget_text"
+    android:textColor="#ffffff"
+    android:textSize="12sp" />

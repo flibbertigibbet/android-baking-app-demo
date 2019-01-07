@@ -3,7 +3,6 @@ package com.banderkat.recipes.di;
 import android.app.Application;
 
 import com.banderkat.recipes.BakingApp;
-import com.banderkat.recipes.IngredientsContentProvider;
 
 import javax.inject.Singleton;
 

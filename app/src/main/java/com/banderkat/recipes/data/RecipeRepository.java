@@ -41,6 +41,6 @@ public class RecipeRepository {
     }
 
     public Cursor getIngredients(long recipeId) {
-        return recipeDao.getIngredients(recipeId);
+        return recipeDao.getRecipeCursor();
     }
 }
