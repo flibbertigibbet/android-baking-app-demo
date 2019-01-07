@@ -7,7 +7,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.banderkat.recipes.activities.RecipesMainActivity;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,14 +21,6 @@ public class RecipesMainActivityTest {
     @Rule
     public ActivityTestRule<RecipesMainActivity> mActivityRule = new ActivityTestRule<>(
             RecipesMainActivity.class);
-
-    /*
-    @Before
-    public void init(){
-        mActivityRule.getActivity()
-                .getSupportFragmentManager().beginTransaction();
-    }
-    */
 
     @Test
     public void mainActivityShouldDisplay() {
