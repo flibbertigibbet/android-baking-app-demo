@@ -65,6 +65,9 @@ public class RecipeStepFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = (RecipesMainActivity) getActivity();
+        activity.incrementIdling();
+
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             recipeId = bundle.getLong(ARG_RECIPE_ID);
@@ -83,9 +86,6 @@ public class RecipeStepFragment extends Fragment {
 
         // Set the adapter
         Context context = view.getContext();
-
-        activity = (RecipesMainActivity) getActivity();
-        activity.incrementIdling();
 
         // Only show steps list as a grid outside of master-detail
         int columnCount = 1;
@@ -118,6 +118,7 @@ public class RecipeStepFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.show();
             recyclerView.setAdapter(new RecipeStepAdapter(getContext(), recipeId, recipe.getSteps(), interactionListener));
+
             activity.decrementIdling();
         });
 

@@ -112,8 +112,8 @@ public class StepDetailFragment extends Fragment {
 
             // Handle rotate to landscape on tablet
             if (container.findViewById(R.id.fragment_detail_container) == null) {
-                Log.d(LOG_LABEL, "Swapping details out of list container and adding list container");
                 activity.incrementIdling();
+                Log.d(LOG_LABEL, "Swapping details out of list container and adding list container");
                 FragmentManager fragmentManager = getFragmentManager();
                 // wait for the fragment transaction already in progress to redo fragment layout
                 new Handler().post(() -> {

@@ -135,11 +135,13 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
 
     @Override
     public void clickedRecipe(int position) {
+        activity.incrementIdling();
         Log.d(LOG_LABEL, "Clicked recipe at position: " + position);
 
         Recipe recipe = recipeList.get(position);
         Log.d(LOG_LABEL, "Recipe name: " + recipe.getName());
 
         activity.goToStepList(recipe.getId());
+        activity.decrementIdling();
     }
 }
