@@ -51,7 +51,7 @@ public class BasicRecyclerViewTest {
 
     @Test
     public void basicRecyclerViewTest() {
-        
+
         ViewInteraction textView = onView(
                 allOf(withId(R.id.recipe_list_item_name), withText("Nutella Pie"),
                         childAtPosition(
