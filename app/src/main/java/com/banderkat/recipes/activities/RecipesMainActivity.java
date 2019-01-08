@@ -3,6 +3,8 @@ package com.banderkat.recipes.activities;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -30,6 +32,9 @@ public class RecipesMainActivity extends AppCompatActivity
     private static final String LOG_LABEL = "MainActivity";
     private static final int RECIPE_CARD_WIDTH = 300;
 
+    @Nullable
+    private CountingIdlingResource countingIdlingResource;
+
     @Inject
     public RecipeViewModelFactory viewModelFactory;
     RecipeViewModel viewModel;
@@ -44,6 +49,18 @@ public class RecipesMainActivity extends AppCompatActivity
             viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecipeViewModel.class);
         }
         return viewModel;
+    }
+
+    public RecipesMainActivity() {
+        this.countingIdlingResource = new CountingIdlingResource("RecipesIdling");
+    }
+
+    public void incrementIdling() {
+        countingIdlingResource.increment();
+    }
+
+    public void decrementIdling() {
+        countingIdlingResource.decrement();
     }
 
     public int getGridSpanCount() {
@@ -72,12 +89,14 @@ public class RecipesMainActivity extends AppCompatActivity
                 return;
             }
 
+            incrementIdling();
             FragmentManager fragmentManager = getSupportFragmentManager();
             RecipeListFragment fragment = new RecipeListFragment();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.fragment_container, fragment, RECIPE_LIST_FRAGMENT);
             transaction.commit();
             fragmentManager.executePendingTransactions();
+            decrementIdling();
         } else {
             Log.e(LOG_LABEL, "have no fragment container");
         }
@@ -86,6 +105,7 @@ public class RecipesMainActivity extends AppCompatActivity
     public void goToStepList(long recipeId) {
         Log.d(LOG_LABEL, "go to step list for recipe ID: " + String.valueOf(recipeId));
 
+        incrementIdling();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = RecipeStepFragment.newInstance(recipeId);
@@ -101,10 +121,12 @@ public class RecipesMainActivity extends AppCompatActivity
         transaction.addToBackStack(STEP_LIST_FRAGMENT);
         transaction.commit();
         fragmentManager.executePendingTransactions();
+        decrementIdling();
     }
 
     public void goToRecipeStepDetail(long recipeId, int position) {
         Log.d(LOG_LABEL, "Loading detail for step at position " + position + " for recipe " + recipeId);
+        incrementIdling();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         Fragment fragment = StepDetailFragment.newInstance(recipeId, position);
@@ -119,6 +141,7 @@ public class RecipesMainActivity extends AppCompatActivity
 
         transaction.commit();
         fragmentManager.executePendingTransactions();
+        decrementIdling();
     }
 
     @Override
@@ -151,5 +174,10 @@ public class RecipesMainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Nullable
+    public CountingIdlingResource getCountingIdlingResource() {
+        return countingIdlingResource;
     }
 }

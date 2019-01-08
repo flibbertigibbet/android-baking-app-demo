@@ -84,6 +84,7 @@ public class StepDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         activity = (RecipesMainActivity) getActivity();
+        activity.incrementIdling();
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
@@ -111,6 +112,7 @@ public class StepDetailFragment extends Fragment {
 
             // Handle rotate to landscape on tablet
             if (container.findViewById(R.id.fragment_detail_container) == null) {
+                activity.incrementIdling();
                 Log.d(LOG_LABEL, "Swapping details out of list container and adding list container");
                 FragmentManager fragmentManager = getFragmentManager();
                 // wait for the fragment transaction already in progress to redo fragment layout
@@ -122,6 +124,7 @@ public class StepDetailFragment extends Fragment {
                     transaction.add(R.id.fragment_detail_container, stepFragment, STEP_DETAIL_FRAGMENT);
                     transaction.commit();
                     fragmentManager.executePendingTransactions();
+                    activity.decrementIdling();
                 });
             }
         }
@@ -174,6 +177,8 @@ public class StepDetailFragment extends Fragment {
                 Log.d(LOG_LABEL, "No video for step " + step.getShortDescription());
                 playerView.setVisibility(View.GONE);
             }
+
+            activity.decrementIdling();
         });
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
