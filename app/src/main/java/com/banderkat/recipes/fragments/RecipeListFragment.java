@@ -43,6 +43,7 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
         Log.d(LOG_LABEL, "create recipe list view");
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
         activity = (RecipesMainActivity)getActivity();
+        activity.incrementIdling();
 
         recipeListRecyclerView = view.findViewById(R.id.recipe_list_recycler_view);
 
@@ -92,6 +93,7 @@ public class RecipeListFragment extends Fragment implements RecipeListAdapter.Re
 
             recipeList = recipeResource.data;
             loadData();
+            activity.decrementIdling();
         });
 
         return view;
