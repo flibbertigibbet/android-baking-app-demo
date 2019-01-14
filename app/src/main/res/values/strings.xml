@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Baking Time</string>
+    <string name="no_recipes">No recipes found.</string>
+    <string name="ingredients_label">Recipe Ingredients</string>
+
+    <string name="appwidget_text">Ingredients</string>
+    <string name="add_widget">Add widget</string>
+    <string name="appwidget_select_recipe_button">Select Recipe</string>
+    <string name="empty_view_text">No results</string>
+</resources>
