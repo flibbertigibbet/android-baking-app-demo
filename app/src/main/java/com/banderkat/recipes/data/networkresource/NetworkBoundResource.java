@@ -91,6 +91,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
     private void saveResultAndReInit(ApiResponse<RequestType> response) {
         new AsyncTask<Void, Void, Void>() {
 
+            @SuppressLint("WrongThread")
             @Override
             protected Void doInBackground(Void... voids) {
                 if (response.body != null) {
