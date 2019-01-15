@@ -54,6 +54,7 @@ public class StepDetailFragment extends Fragment {
 
     public static final String ARG_RECIPE_ID = "recipe-id";
     public static final String ARG_STEP_ID = "step-id";
+    public static final String ARG_VIDEO_POSITION = "video-position";
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
@@ -65,6 +66,7 @@ public class StepDetailFragment extends Fragment {
     private Step step;
     private RecipesMainActivity activity;
     private SimpleExoPlayer player;
+    private long playbackPosition;
 
     public StepDetailFragment() {
         // Required empty public constructor
@@ -80,18 +82,26 @@ public class StepDetailFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
 
         activity = (RecipesMainActivity) getActivity();
         activity.incrementIdling();
 
-        if (getArguments() != null) {
-            Bundle bundle = getArguments();
+        // Get intent arguments for new instance, if there's no saved state to restore
+        if (bundle == null) {
+            bundle = getArguments();
+        }
+
+        if (bundle != null) {
             recipeId = bundle.getLong(ARG_RECIPE_ID);
             stepId = bundle.getInt(ARG_STEP_ID);
+            playbackPosition = bundle.containsKey(ARG_VIDEO_POSITION) ? bundle.getLong(ARG_VIDEO_POSITION) : 0;
             viewModel = activity.getViewModel();
+        } else {
+            Log.e(LOG_LABEL, "no arguments sent to detail fragment");
         }
+
     }
 
     @Override
@@ -172,7 +182,14 @@ public class StepDetailFragment extends Fragment {
                         .createMediaSource(videoUri);
 
                 // Prepare the player with the source.
-                player.prepare(videoSource);
+                player.setPlayWhenReady(true);
+                player.prepare(videoSource, false, false);
+                if (playbackPosition > 0) {
+                    player.seekTo(playbackPosition);
+                    Log.d(LOG_LABEL, "seek to " + playbackPosition);
+                } else {
+                    Log.d(LOG_LABEL, "no playback position set");
+                }
             } else {
                 Log.d(LOG_LABEL, "No video for step " + step.getShortDescription());
                 playerView.setVisibility(View.GONE);
@@ -205,9 +222,18 @@ public class StepDetailFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
+        Log.d(LOG_LABEL, "onSaveInstanceState");
         outState.putLong(ARG_RECIPE_ID, recipeId);
         outState.putInt(ARG_STEP_ID, stepId);
+
+        if (player != null) {
+            Log.d(LOG_LABEL, "saving current player position: " + player.getCurrentPosition());
+            outState.putLong(ARG_VIDEO_POSITION, player.getCurrentPosition());
+        } else {
+            Log.w(LOG_LABEL, "Have no player to save its state");
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -216,18 +242,14 @@ public class StepDetailFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(LOG_LABEL, "onStop");
+    public void onDetach() {
+        Log.d(LOG_LABEL, "onDetach");
+
         if (player != null) {
             player.release();
             player = null;
         }
-    }
 
-    @Override
-    public void onDetach() {
-        Log.d(LOG_LABEL, "onDetach");
         super.onDetach();
     }
 }
