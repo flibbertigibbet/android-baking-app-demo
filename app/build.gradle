@@ -54,6 +54,8 @@ dependencies {
 
     // Exoplayer media player
     implementation 'com.google.android.exoplayer:exoplayer:2.9.3'
+    // Picasso image viewer
+    implementation 'com.squareup.picasso:picasso:2.71828'
     // Architecture Components
     def archComponentsVersion = '1.1.1'
     def roomVersion = '1.1.1'

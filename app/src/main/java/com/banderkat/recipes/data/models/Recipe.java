@@ -15,7 +15,7 @@ import java.util.List;
 public class Recipe {
 
     @Ignore
-    public static final String PLACEHOLDER_IMAGE_URL = "https://placekitten.com/200/300";
+    public static final String PLACEHOLDER_IMAGE_URL = "https://placekitten.com/80/80";
 
     @PrimaryKey
     @NonNull
