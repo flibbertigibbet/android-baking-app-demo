@@ -93,6 +93,9 @@ public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewH
 
     @BindingAdapter({"bind:thumbnailUrl"})
     public static void loadImage(ImageView view, String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return;
+        }
         Picasso.get().load(imageUrl).tag(PICASSO_GROUP).fit().into(view);
     }
 }

@@ -93,6 +93,9 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Vie
 
     @BindingAdapter({"bind:imageUrl"})
     public static void loadImage(ImageView view, String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return;
+        }
         Picasso.get().load(imageUrl).tag(PICASSO_GROUP).fit().into(view);
     }
 }
