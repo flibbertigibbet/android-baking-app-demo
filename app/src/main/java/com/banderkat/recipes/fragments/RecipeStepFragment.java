@@ -37,9 +37,7 @@ public class RecipeStepFragment extends Fragment {
 
     public static final String ARG_RECIPE_ID = "recipe-id";
 
-    @Inject
-    public RecipeViewModelFactory viewModelFactory;
-    RecipeViewModel viewModel;
+    private RecipeViewModel viewModel;
 
     private long recipeId;
     private Recipe recipe;

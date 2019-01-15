@@ -37,7 +37,7 @@ public class RecipesMainActivity extends AppCompatActivity
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
-    RecipeViewModel viewModel;
+    private RecipeViewModel viewModel;
 
     /**
      * Share a single, lazily instantiated view model between the fragments managed by this activity.
@@ -60,7 +60,11 @@ public class RecipesMainActivity extends AppCompatActivity
     }
 
     public void decrementIdling() {
-        countingIdlingResource.decrement();
+        try {
+            countingIdlingResource.decrement();
+        } catch (IllegalStateException ex) {
+            Log.w(LOG_LABEL, ex.getMessage());
+        }
     }
 
     public int getGridSpanCount() {

@@ -56,9 +56,7 @@ public class StepDetailFragment extends Fragment {
     public static final String ARG_STEP_ID = "step-id";
     public static final String ARG_VIDEO_POSITION = "video-position";
 
-    @Inject
-    public RecipeViewModelFactory viewModelFactory;
-    RecipeViewModel viewModel;
+    private RecipeViewModel viewModel;
 
     private long recipeId;
     private int stepId;

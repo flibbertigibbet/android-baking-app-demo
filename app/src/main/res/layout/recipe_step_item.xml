@@ -17,13 +17,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/step_detail_item_label"
-            android:text= "@{step.id > 0 ? `Step #` + String.valueOf(step.id) + `: ` + step.shortDescription : @string/ingredients_label}"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
-            android:layout_margin="32dp"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/step_detail_item_thumbnail"
+                app:thumbnailUrl="@{step.thumbnailURL}"
+                android:visibility="@{step.thumbnailURL == null || step.thumbnailURL.isEmpty() ? View.GONE : View.VISIBLE}"
+                android:layout_margin="16dp"
+                android:baselineAlignBottom="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/step_detail_item_label"
+                app:layout_constraintVertical_weight="1"
+                app:layout_constrainedWidth="true"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintWidth_min="80dp"
+                app:layout_constraintHeight_min="80dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/step_detail_item_label"
+                android:text= "@{step.id > 0 ? `Step #` + String.valueOf(step.id) + `: ` + step.shortDescription : @string/ingredients_label}"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:layout_margin="16dp"
+                android:scrollHorizontally="false"
+                android:singleLine="false"
+                android:ellipsize="none"
+                android:maxLines="5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/step_detail_item_thumbnail"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="0dp"
+                app:layout_constrainedWidth="true"
+                android:layout_height="wrap_content" />
+
+
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
 </layout>

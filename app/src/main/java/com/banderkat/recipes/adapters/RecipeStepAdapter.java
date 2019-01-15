@@ -1,18 +1,22 @@
 package com.banderkat.recipes.adapters;
 
 import android.content.Context;
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.banderkat.recipes.BR;
 import com.banderkat.recipes.R;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.fragments.RecipeStepFragment.OnListFragmentInteractionListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -26,6 +30,8 @@ public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewH
     private long recipeId;
     private OnListFragmentInteractionListener listener;
     private LayoutInflater inflater;
+
+    private static final String PICASSO_GROUP = "step_thumbnails";
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ViewDataBinding binding;
@@ -83,5 +89,13 @@ public class RecipeStepAdapter extends ListAdapter<Step, RecipeStepAdapter.ViewH
     @Override
     public int getItemCount() {
         return recipeSteps.size();
+    }
+
+    @BindingAdapter({"bind:thumbnailUrl"})
+    public static void loadImage(ImageView view, String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return;
+        }
+        Picasso.get().load(imageUrl).tag(PICASSO_GROUP).fit().into(view);
     }
 }
