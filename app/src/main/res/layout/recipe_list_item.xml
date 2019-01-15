@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable name="recipe" type="com.banderkat.recipes.data.models.Recipe" />
     </data>
 
@@ -16,13 +17,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/recipe_list_item_name"
-            android:text="@{recipe.name}"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
-            android:layout_margin="32dp"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/recipe_list_item_image"
+                app:imageUrl="@{recipe.image}"
+                android:visibility="@{recipe.image == null || recipe.image.isEmpty() ? View.GONE : View.VISIBLE}"
+                android:layout_margin="16dp"
+                android:baselineAlignBottom="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/recipe_list_item_name"
+                app:layout_constraintVertical_weight="1"
+                app:layout_constrainedWidth="true"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintWidth_min="80dp"
+                app:layout_constraintHeight_min="80dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/recipe_list_item_name"
+                android:text="@{recipe.name}"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                android:layout_margin="16dp"
+                android:scrollHorizontally="false"
+                android:singleLine="false"
+                android:ellipsize="none"
+                android:maxLines="5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/recipe_list_item_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="0dp"
+                app:layout_constrainedWidth="true"
+                android:layout_height="wrap_content" />
+
+
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
 </layout>

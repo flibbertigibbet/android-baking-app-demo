@@ -3,6 +3,7 @@ package com.banderkat.recipes.data.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -10,6 +11,9 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         parentColumns = "id", childColumns = "recipeId", onDelete = CASCADE),
         primaryKeys = {"id", "recipeId"})
 public class Step {
+
+    @Ignore
+    private static final String PLACEHOLDER_IMAGE_URL = "https://placekitten.com/80/80";
 
     @ColumnInfo(index = true)
     private final long id;
@@ -61,6 +65,7 @@ public class Step {
     }
 
     public String getThumbnailURL() {
-        return thumbnailURL;
+
+        return thumbnailURL == null || thumbnailURL.isEmpty() ? PLACEHOLDER_IMAGE_URL : thumbnailURL;
     }
 }
