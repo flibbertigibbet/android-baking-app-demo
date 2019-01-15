@@ -60,7 +60,11 @@ public class RecipesMainActivity extends AppCompatActivity
     }
 
     public void decrementIdling() {
-        countingIdlingResource.decrement();
+        try {
+            countingIdlingResource.decrement();
+        } catch (IllegalStateException ex) {
+            Log.w(LOG_LABEL, ex.getMessage());
+        }
     }
 
     public int getGridSpanCount() {

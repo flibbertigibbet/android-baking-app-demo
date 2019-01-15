@@ -1,5 +1,6 @@
 package com.banderkat.recipes.adapters;
 
+import android.arch.persistence.room.Ignore;
 import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
@@ -92,8 +93,6 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Vie
 
     @BindingAdapter({"bind:imageUrl"})
     public static void loadImage(ImageView view, String imageUrl) {
-        Picasso.get().setLoggingEnabled(true);
-        Log.d("BindImageUrl", imageUrl);
         Picasso.get().load(imageUrl).tag(PICASSO_GROUP).fit().into(view);
     }
 }
