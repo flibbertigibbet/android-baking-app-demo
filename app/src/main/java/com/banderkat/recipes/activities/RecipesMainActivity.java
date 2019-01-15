@@ -37,7 +37,7 @@ public class RecipesMainActivity extends AppCompatActivity
 
     @Inject
     public RecipeViewModelFactory viewModelFactory;
-    RecipeViewModel viewModel;
+    private RecipeViewModel viewModel;
 
     /**
      * Share a single, lazily instantiated view model between the fragments managed by this activity.
