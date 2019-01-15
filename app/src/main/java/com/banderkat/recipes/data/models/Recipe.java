@@ -1,6 +1,7 @@
 package com.banderkat.recipes.data.models;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
@@ -12,6 +13,9 @@ import java.util.List;
 
 @Entity(tableName = "recipe")
 public class Recipe {
+
+    @Ignore
+    public static final String PLACEHOLDER_IMAGE_URL = "https://placekitten.com/200/300";
 
     @PrimaryKey
     @NonNull
@@ -82,6 +86,6 @@ public class Recipe {
     }
 
     public String getImage() {
-        return image;
+        return image == null || image.isEmpty() ? PLACEHOLDER_IMAGE_URL : image;
     }
 }
