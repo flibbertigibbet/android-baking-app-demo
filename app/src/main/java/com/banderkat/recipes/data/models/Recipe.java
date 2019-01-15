@@ -25,12 +25,18 @@ public class Recipe {
     @TypeConverters(StepConverter.class)
     private List<Step> steps;
 
+    private final int servings;
+
+    private final String image;
+
     // timestamp is not final, as it is set on database save, and not by serializer
     private long timestamp;
 
-    public Recipe(long id, String name) {
+    public Recipe(long id, String name, int servings, String image) {
         this.id = id;
         this.name = name;
+        this.servings = servings;
+        this.image = image;
     }
 
     /**
@@ -69,5 +75,13 @@ public class Recipe {
 
     public void setSteps(List<Step> steps) {
         this.steps = steps;
+    }
+
+    public int getServings() {
+        return servings;
+    }
+
+    public String getImage() {
+        return image;
     }
 }
