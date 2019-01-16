@@ -24,8 +24,8 @@ import com.banderkat.recipes.data.models.Ingredient;
 import com.banderkat.recipes.data.models.Recipe;
 import com.banderkat.recipes.data.models.Step;
 import com.banderkat.recipes.databinding.FragmentStepDetailBinding;
-import com.banderkat.recipes.di.RecipeViewModelFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -35,8 +35,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import static com.banderkat.recipes.activities.RecipesMainActivity.STEP_DETAIL_FRAGMENT;
 import static com.banderkat.recipes.activities.RecipesMainActivity.STEP_LIST_FRAGMENT;
@@ -55,6 +53,7 @@ public class StepDetailFragment extends Fragment {
     public static final String ARG_RECIPE_ID = "recipe-id";
     public static final String ARG_STEP_ID = "step-id";
     public static final String ARG_VIDEO_POSITION = "video-position";
+    public static final String ARG_VIDEO_PLAYBACK_STATE = "video-state";
 
     private RecipeViewModel viewModel;
 
@@ -65,6 +64,7 @@ public class StepDetailFragment extends Fragment {
     private RecipesMainActivity activity;
     private SimpleExoPlayer player;
     private long playbackPosition;
+    private int playbackState;
 
     public StepDetailFragment() {
         // Required empty public constructor
@@ -95,6 +95,8 @@ public class StepDetailFragment extends Fragment {
             recipeId = bundle.getLong(ARG_RECIPE_ID);
             stepId = bundle.getInt(ARG_STEP_ID);
             playbackPosition = bundle.containsKey(ARG_VIDEO_POSITION) ? bundle.getLong(ARG_VIDEO_POSITION) : 0;
+            playbackState = bundle.containsKey(ARG_VIDEO_PLAYBACK_STATE) ?
+                    bundle.getInt(ARG_VIDEO_PLAYBACK_STATE) : Player.STATE_BUFFERING;
             viewModel = activity.getViewModel();
         } else {
             Log.e(LOG_LABEL, "no arguments sent to detail fragment");
@@ -180,13 +182,17 @@ public class StepDetailFragment extends Fragment {
                         .createMediaSource(videoUri);
 
                 // Prepare the player with the source.
-                player.setPlayWhenReady(true);
                 player.prepare(videoSource, false, false);
                 if (playbackPosition > 0) {
                     player.seekTo(playbackPosition);
                     Log.d(LOG_LABEL, "seek to " + playbackPosition);
                 } else {
                     Log.d(LOG_LABEL, "no playback position set");
+                }
+                if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+                    player.setPlayWhenReady(false);
+                } else {
+                    player.setPlayWhenReady(true);
                 }
             } else {
                 Log.d(LOG_LABEL, "No video for step " + step.getShortDescription());
@@ -224,30 +230,28 @@ public class StepDetailFragment extends Fragment {
         outState.putLong(ARG_RECIPE_ID, recipeId);
         outState.putInt(ARG_STEP_ID, stepId);
 
-        if (player != null) {
-            Log.d(LOG_LABEL, "saving current player position: " + player.getCurrentPosition());
-            outState.putLong(ARG_VIDEO_POSITION, player.getCurrentPosition());
-        } else {
-            Log.w(LOG_LABEL, "Have no player to save its state");
-        }
+        Log.d(LOG_LABEL, "saving current player position: " + playbackPosition + " with state " + playbackState);
+        outState.putLong(ARG_VIDEO_POSITION, playbackPosition);
+        outState.putInt(ARG_VIDEO_PLAYBACK_STATE, playbackState);
 
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
+    public void onPause() {
+        Log.d(LOG_LABEL, "onPause");
 
-    @Override
-    public void onDetach() {
-        Log.d(LOG_LABEL, "onDetach");
-
+        // onPause happens before onSaveInstanceState, so get player state before destroying it
         if (player != null) {
+            playbackState = player.getPlaybackState();
+            playbackPosition = player.getCurrentPosition();
             player.release();
             player = null;
+        } else {
+            playbackPosition = 0;
+            playbackState = Player.STATE_BUFFERING;
         }
 
-        super.onDetach();
+        super.onPause();
     }
 }
