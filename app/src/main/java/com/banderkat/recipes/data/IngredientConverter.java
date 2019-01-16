@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class IngredientConverter {
+public final class IngredientConverter {
 
     @TypeConverter
     public String fromIngredientList(List<Ingredient> ingredients) {
